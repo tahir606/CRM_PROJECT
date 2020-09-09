@@ -1,27 +1,31 @@
 package JCode;
 
 
+import Email.EmailDashController;
 import JCode.mysql.EmailQueries;
 import JCode.mysql.mySqlConn;
 import JSockets.JServer;
 import objects.Document;
 import objects.ESetting;
 import objects.Email;
-import Email.EmailDashController;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.*;
-import javax.mail.PasswordAuthentication;
 import javax.mail.internet.*;
 import javax.mail.search.FlagTerm;
 import java.awt.*;
-import java.net.*;
-import java.util.List;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 public class emailControl {
 
@@ -34,19 +38,24 @@ public class emailControl {
 
     private static String F_ADD = "";
     private static mySqlConn sqlConn;
-
+    private final static String TRUNCATED = "truncate";
     private static ESetting ESETTING;
     private FileHelper fHelper;
-
-    private static List<String> white_list;
-
+    private static String replacementKeyword;
+    private static List<String> white_list, blackListKeyword;
     public static boolean EmailsNotSent = false;
+
 
     public emailControl() {
         fHelper = new FileHelper();
         sqlConn = new mySqlConn();
         ESETTING = sqlConn.getEmailSettings();
         white_list = sqlConn.getWhiteBlackListDomains(1);
+        blackListKeyword = sqlConn.getBlackListKeyword();
+        replacementKeyword = sqlConn.getReplacementKeyword();
+//
+//        blackListKey = String.join(",", blackListKeyword);
+//        System.out.println("ok :"+blackListKey);
         if (ESETTING != null) {
             F_ADD = ESETTING.getFspath();
 //            System.out.println(F_ADD);
@@ -117,6 +126,7 @@ public class emailControl {
         Address[] toAddress = message.getRecipients(Message.RecipientType.TO);
         Address[] ccAddress = message.getRecipients(Message.RecipientType.CC);
 
+
         SUBJECT = message.getSubject();
         if (SUBJECT.equals(""))
             SUBJECT = "No Subject";
@@ -151,8 +161,7 @@ public class emailControl {
         email.setSolvFlag('N');
         email.setLockd(0);
         email.setFreze(false);
-        System.out.println(email);
-
+        System.out.println("store file: " + email);
         int tix = 1;    //2 means ticket 1 means general
 
         for (String t : white_list) {
@@ -273,6 +282,8 @@ public class emailControl {
                         return new PasswordAuthentication(ESETTING.getEmail(), ESETTING.getPass());
                     }
                 });
+//        replacing keyword
+        truncateBlacklistedKeywords(email);
 
         try {
             // Create a default MimeMessage object.
@@ -283,7 +294,8 @@ public class emailControl {
 
             // Set Subject: header field
 
-
+//            checkBlacklist(email,message);
+//            comment for check noor domain
             message.setSubject(email.getSubject());
 
             // Create a multipart message
@@ -319,7 +331,6 @@ public class emailControl {
                 }
             }
             email.setAttch(attach);
-
             String upDocSt = ""; //String to save in the database
             if (email.getDocuments() == null) {
             } else if (!(email.getDocuments().size() < 0)) {
@@ -378,29 +389,42 @@ public class emailControl {
 
             String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(Calendar.getInstance().getTime());
             email.setTimestamp(timeStamp);
-
             new Thread(() -> {
                 try {
                     Transport.send(message);
                     System.out.println("Sent E-Mail to: " + email.getToAddress()[0].toString());
-                    if (!email.isSent()) {
-                        if (!message.getSubject().contains(EmailQueries.autoReplySubject)) {
-                            email.setSent(true);
-                            sqlConn.insertEmailSent(email);
+//                    if (!email.isSent()) {
+                    if (!message.getSubject().contains(EmailQueries.autoReplySubject)) {
+                        email.setSent(true);
+                        if (EmailDashController.Email_Type == 3) {
+                            sqlConn.updateResendEmail(email); //update email_Sent table
+                        } else {
+                            sqlConn.insertEmailSent(email); //insert email_Sent table
                         }
                     }
+//                    }
                 } catch (MessagingException ex) {
                     ex.printStackTrace();
                     trayHelper tray = new trayHelper();
                     tray.displayNotification("Error", "Messaging Exception: Email Not Sent");
-
                     email.setSent(false);
-                    sqlConn.insertEmailSent(email);
+                    sqlConn.insertEmailSent(email); //insert email_Sent table
+
                 }
             }).start();
 
         } catch (MessagingException e) {
             e.printStackTrace();
+        }
+
+    }
+
+    //  replacing keyword
+    public static void truncateBlacklistedKeywords(Email email) {
+        for (int i = 0; i < blackListKeyword.size(); i++) {
+            String value = "(?i)" + blackListKeyword.get(i); // (?i) this key is used for ignoring case
+            email.setSubject(email.getSubject().replaceAll(value, replacementKeyword)); // replaceAll will replace keyword
+            email.setBody(email.getBody().replaceAll(value, replacementKeyword));
         }
 
     }

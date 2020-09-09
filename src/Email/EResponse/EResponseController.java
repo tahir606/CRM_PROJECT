@@ -1,6 +1,7 @@
 package Email.EResponse;
 
 import Email.EmailDashController;
+import JCode.FileDev;
 import JCode.FileHelper;
 import JCode.emailControl;
 import JCode.mysql.mySqlConn;
@@ -31,11 +32,13 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class EResponseController implements Initializable {
 
-    public static String stAttach;
     @FXML
     private TextField txt_to, txt_cc, txt_bcc, txt_attach, txt_subject;
     @FXML
@@ -53,16 +56,17 @@ public class EResponseController implements Initializable {
     @FXML
     private JFXCheckBox sendAsEmail;
     public static volatile int choice = 1;      //1- Send Email 2-Create Ticket
-
-    private List<File> file;
+    private File file;
+    private List<File> fileList;
     private List<Document> attachedDocuments;
 
     private emailControl helper = new emailControl();
     private FileHelper fileHelper;
 
-    String Subject, Email, cc, bcc, Body, Disclaimer, Attachment;
+    String Subject, Email, cc, bcc, Body, Disclaimer;
+    String attachment;
 
-    public static String stSubject, stTo, stCc, stBcc, stBody;
+    public static String stSubject, stTo, stCc, stBcc, stBody, stAttach;
     public static char stInstance;
 
     public String[] EMAILS_LIST;
@@ -72,15 +76,14 @@ public class EResponseController implements Initializable {
     }
 
     @Override
-        public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources) {
 
         fileHelper = new FileHelper();
 
         if (choice == 1) {
             sendAsEmail.setVisible(false);
             btn_Send.setText("Send");
-        }
-        else if (choice == 2) {
+        } else if (choice == 2) {
             sendAsEmail.setVisible(true);
             btn_Send.setText("Create");
 
@@ -113,51 +116,30 @@ public class EResponseController implements Initializable {
             btn_Send.setText("Reply");
 
         } else if (stInstance == 'F') {
-//            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//            DocumentBuilder builder;
-//            try
-//            {
-//                builder = factory.newDocumentBuilder();
-//                Document doc = (Document) builder.parse(String.valueOf(new InputSource( new StringReader( stAttach ))));
-//
-//                combo_uploaded.getItems().add(doc);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            File file2 = new File(stAttach);
-//            List<FileDev> attFiles = new ArrayList<>();
-//            for (String c : stAttach.split("\\^")) {
-//                FileDev file = new FileDev(c);
-//                attFiles.add(file);
-//            }
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Upload File Path");
-            fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("ALL FILES", "*.*"),
-                    new FileChooser.ExtensionFilter("ZIP", "*.zip"),
-                    new FileChooser.ExtensionFilter("PDF", "*.pdf"),
-                    new FileChooser.ExtensionFilter("TEXT", "*.txt"),
-                    new FileChooser.ExtensionFilter("IMAGE FILES", "*.jpg", "*.png", "*.gif")
-            );
+            if(stAttach==null){
 
+//                txt_attach.setVisible(false);
+            }else{
+                fileList = new ArrayList<>();
+                for (String c : stAttach.split("\\^")) {
+                    FileDev file = new FileDev(c);
+                    fileList.add(file);
+                }
+                String at = "";
+                if (fileList != null) {
+                    for (File f : fileList) {
+                        at = at + " -- " + f.getName();
+                    }
+                    txt_attach.setText(at);
 
-            File file =new  File(stAttach);
-
-            if (file != null) {
-                // pickUpPathField it's your TextField fx:id
-                txt_attach.setText(file.getPath());
-
-            } else  {
-                System.out.println("error"); // or something else
+                    txt_attach.setVisible(true);
+                }
             }
-            System.out.println("abh yeh attachment dhaiko "+ stAttach);
+
             txt_body.setText(stBody);
             txt_body.setDisable(true);
-            txt_attach.setVisible(true);
-            txt_attach.setText(stAttach);
-//            txt_attach.setText(String.valueOf(attFiles));
-//            txt_attach.setDisable(true);
-//            txt_subject.setDisable(true);
+            txt_attach.setDisable(true);
+            txt_subject.setDisable(true);
             lbl_attach.setVisible(false);
             btn_attach.setVisible(false);
             btn_attach.setDisable(true);
@@ -214,10 +196,10 @@ public class EResponseController implements Initializable {
     public void btnAttachClick(ActionEvent actionEvent) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Attach File");
-        file = chooser.showOpenMultipleDialog(new Stage());
+        fileList = chooser.showOpenMultipleDialog(new Stage());
         String at = "";
-        if (file != null) {
-            for (File f : file) {
+        if (fileList != null) {
+            for (File f : fileList) {
                 at = at + " -- " + f.getName();
             }
             txt_attach.setText(at);
@@ -232,11 +214,6 @@ public class EResponseController implements Initializable {
         bcc = "";
         Disclaimer = "";
 
-        System.out.println(hbox_to.getChildren().size());
-        System.out.println(Email);
-        System.out.println(Body);
-//        System.out.println((hbox_to.getChildren().size() == 0 ^ Email.equals("")) || Body.equals(""));
-
         objects.Email em = new Email();
 
         //--------------To
@@ -246,11 +223,11 @@ public class EResponseController implements Initializable {
             for (Node node : b.getChildren()) {
                 if (node.getAccessibleText() == null)
                     continue;
-                System.out.println(node.getAccessibleText());
+//                System.out.println(node.getAccessibleText());
                 if (node.getAccessibleText().equals("txt")) {
                     Label l = (Label) node;
                     try {
-                        System.out.println(l.getText());
+//                        System.out.println(l.getText());
                         Address to = new InternetAddress(l.getText());
                         to_emails.add(to);
                     } catch (AddressException e) {
@@ -312,7 +289,7 @@ public class EResponseController implements Initializable {
         Address cc[] = cc_emails.toArray(new Address[cc_emails.size()]);
         em.setCcAddress(cc);
 
-        System.out.println(Arrays.toString(em.getCcAddress()));
+//        System.out.println(Arrays.toString(em.getCcAddress()));
 
         //--------------BCC
         List<Address> bcc_emails = new ArrayList<>();
@@ -345,24 +322,21 @@ public class EResponseController implements Initializable {
 
         em.setSubject(Subject);
         //Replace Line Breaks with <br> tags
-        Body = Body.replace("\n","<br>");
+        Body = Body.replace("\n", "<br>");
         em.setBody(Body);
         em.setDisclaimer(Disclaimer);
-        if (file == null) {
-        } else if (file.size() > -1)
-            em.setAttachments(file);
+        if (fileList == null) {
+        } else if (fileList.size() > -1)
+            em.setAttachments(fileList);
         else
             em.setAttch("");
 
         if (attachedDocuments != null) {
             em.setDocuments(attachedDocuments);
         }
-
         if (choice == 1) {
-
             helper.sendEmail(em, null);
-        }
-        else if (choice == 2) {
+        } else if (choice == 2) {
 //       send_or_Not.setVisible(true);
 
 
@@ -378,9 +352,9 @@ public class EResponseController implements Initializable {
             String path = sql.getEmailSettings().getFspath() + "\\manual\\";
             fileHelper.createDirectoryIfDoesNotExist(path);
             String attch = "";
-            if (file == null) {
-            } else if (file.size() > -1) {
-                for (File aFile : file) {
+            if (fileList == null) {
+            } else if (fileList.size() > -1) {
+                for (File aFile : fileList) {
                     try {
                         Files.copy(aFile.toPath(),
                                 (new File(path + aFile.getName())).toPath(),
@@ -396,16 +370,16 @@ public class EResponseController implements Initializable {
 
             sql.insertEmailManual(em);
 
-            if(!sendAsEmail.isSelected()){
-                int ticketNo=sql.getManualTicketNo(em);
-                Subject = "Ticket No: "+ ticketNo + " "+txt_subject.getText();
-                Body = "This Ticket is manually created by The Burhani IT Solutions Support Team"+"<br>"+"Your Ticket No is: "+ticketNo + "<br>"+txt_body.getText();
+            if (!sendAsEmail.isSelected()) { //if check box is not check then email will send and this condition will be execute
+                int ticketNo = sql.getManualTicketNo(em);
+                Subject = "Ticket No: " + ticketNo + " " + txt_subject.getText();
+                Body = "This Ticket is manually created by The Burhani IT Solutions Support Team" + "<br>" + "Your Ticket No is: " + ticketNo + "<br>" + txt_body.getText();
                 em.setSubject(Subject);
                 //Replace Line Breaks with <br> tags
-                Body = Body.replace("\n","<br>");
+                Body = Body.replace("\n", "<br>");
                 em.setBody(Body);
 //                int var=sql.generateTicket();
-                System.out.println("check ticket No"+ticketNo);
+//                System.out.println("check ticket No" + ticketNo);
                 helper.sendEmail(em, null);
             }
 

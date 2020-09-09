@@ -21,7 +21,7 @@
         <JFXTextField fx:id="txt_bcc" layoutX="66.0" layoutY="125.0" prefHeight="25.0" prefWidth="298.0" AnchorPane.leftAnchor="66.0" AnchorPane.rightAnchor="176.0" />
         <Label layoutX="10.0" layoutY="120.0" text="BCC:" />
         <JFXTextField fx:id="txt_subject" layoutX="66.0" layoutY="170.0" prefHeight="25.0" prefWidth="298.0" AnchorPane.leftAnchor="66.0" AnchorPane.rightAnchor="122.0" />
-        <JFXTextField fx:id="txt_attach" layoutX="66.0" layoutY="209.0" prefHeight="25.0" prefWidth="298.0" AnchorPane.leftAnchor="66.0" AnchorPane.rightAnchor="122.0" />
+        <JFXTextField fx:id="txt_attach" disable="true" editable="false" layoutX="66.0" layoutY="209.0" prefHeight="25.0" prefWidth="298.0" AnchorPane.leftAnchor="66.0" AnchorPane.rightAnchor="122.0" />
         <HBox fx:id="hbox_bcc" layoutX="60.0" layoutY="108.0" prefHeight="17.0" prefWidth="453.0" />
         <Text layoutX="10.0" layoutY="187.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Subject:" />
         <Text layoutX="10.0" layoutY="307.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Body:" />

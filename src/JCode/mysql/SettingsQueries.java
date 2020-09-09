@@ -207,5 +207,48 @@ public class SettingsQueries {
         }
     }
 
+    //  this method update replacement keyword
+    public void updateReplacementKeyword(String saveKeyword) {
+        String query = "UPDATE  email_settings  SET  REPLACEMENT_KEYWORD = ? ";
+        PreparedStatement statement = null;
+        try {
+            statement = static_con.prepareStatement(query);
+            statement.setString(1, saveKeyword);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    //  this method return replacement keyword
+    public String getReplacementKeyword() {
+        String query = "SELECT REPLACEMENT_KEYWORD FROM email_settings";
+        String replacedKeyword = "";
+        try {
+            // Connection con = getConnection();
+            PreparedStatement statement = static_con.prepareStatement(query);
+//            System.out.println(query);
+            ResultSet set = statement.executeQuery();
+            while (set.next()) {
+                replacedKeyword = set.getString("REPLACEMENT_KEYWORD");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return replacedKeyword;
+    }
+
+    //  this method delete blackList keywords
+    public void removeKeyword(String selectedItem) {
+        String query = "DELETE FROM keyword_list Where keyword_Value =? ";
+        PreparedStatement statement = null;
+        try {
+            statement = static_con.prepareStatement(query);
+            statement.setString(1, selectedItem);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

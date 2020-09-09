@@ -14,12 +14,12 @@ public class UserQueries {
 
     private Connection static_con;
     private FileHelper fHelper;
-    
+
     public UserQueries(Connection static_con, FileHelper fHelper) {
         this.static_con = static_con;
         this.fHelper = fHelper;
     }
-    
+
     public boolean authenticateLogin(String username, String password) {
 
         String query = "SELECT UCODE, FNAME, URIGHT, ISEMAIL FROM USERS " +
@@ -194,8 +194,8 @@ public class UserQueries {
 
         List<Users> userList = new ArrayList<>();
 
-        String query = "SELECT UCODE, UNAME, FNAME, EMAIL, UPASS, URIGHT, FREZE, ISEMAIL FROM USERS WHERE FREZE = 'N'";
-
+        String query = "SELECT UCODE, UNAME, FNAME, EMAIL, UPASS, URIGHT, FREZE, ISEMAIL FROM USERS ";
+//        String query = "SELECT UCODE, UNAME, FNAME, EMAIL, UPASS, URIGHT, FREZE, ISEMAIL FROM USERS WHERE FREZE = 'N'";
         String query2 = "SELECT RCODE FROM RIGHTS_CHART WHERE UCODE = ?";
 
 //        // Connection con = getConnection();
@@ -213,11 +213,12 @@ public class UserQueries {
                 user.setFNAME(set.getString("FNAME"));
                 user.setEmail(set.getString("EMAIL"));
                 user.setPassword(set.getString("UPASS"));
-                if (set.getString("UNAME").equals("Y")) {
+                if (set.getString("FREZE").equals("Y")) {
                     user.setFreeze(true);
                 } else {
                     user.setFreeze(false);
                 }
+
                 if (set.getString("ISEMAIL").equals("Y")) {
                     user.setEmailBool(true);
                 } else {
@@ -252,8 +253,8 @@ public class UserQueries {
     public List<Users.uRights> getAllUserRights() {
 
         List<Users.uRights> rightsList = new ArrayList<>();
-
-        String query = "SELECT RCODE, RNAME FROM RIGHTS_LIST WHERE FREZE = 'N'";
+        String query = "SELECT RCODE, RNAME FROM RIGHTS_LIST ";
+//        String query = "SELECT RCODE, RNAME FROM RIGHTS_LIST WHERE FREZE = 'N'";
 
 //        // Connection con = getConnection();
         PreparedStatement statement = null;
@@ -365,26 +366,26 @@ public class UserQueries {
         }
 
     }
-
-    public void archiveUser(Users u) {
-
-        String query = "UPDATE USERS SET FREZE = 'Y' WHERE UCODE = ?";
-
-        // Connection con = getConnection();
-        PreparedStatement statement = null;
-
-        try {
-            statement = static_con.prepareStatement(query);
-            statement.setInt(1, u.getUCODE());
-            statement.executeUpdate();
-
-            statement.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            // // doRelease(con);
-        }
-
-    }
+//
+//    public void archiveUser(Users u) {
+//
+//        String query = "UPDATE USERS SET FREZE = 'Y' WHERE UCODE = ?";
+//
+//        // Connection con = getConnection();
+//        PreparedStatement statement = null;
+//
+//        try {
+//            statement = static_con.prepareStatement(query);
+//            statement.setInt(1, u.getUCODE());
+//            statement.executeUpdate();
+//
+//            statement.close();
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } finally {
+//            // // doRelease(con);
+//        }
+//
+//    }
 }

@@ -68,18 +68,17 @@ public class Filters {
         String[] filters;
         try {
             filters = fHelper.ReadFilter().split(",");
-
             Filters filter = new Filters();
-            filter.setSortBy(filters[0]);
-            filter.setAscDesc(filters[1]);
+            filter.setSortBy(filters[0]);//tickets
+            filter.setAscDesc(filters[1]);//desc
 
-            filter.setSolved(Boolean.parseBoolean(filters[2]));
-            filter.setUnsolved(Boolean.parseBoolean(filters[3]));
-            filter.setLocked(Boolean.parseBoolean(filters[4]));
-            filter.setUnlocked(Boolean.parseBoolean(filters[5]));
-            filter.setLockedByMe(Boolean.parseBoolean(filters[6]));
-            filter.setHideReminders(Boolean.parseBoolean(filters[7]));
-            filter.setArchived(Boolean.parseBoolean(filters[8]));
+            filter.setSolved(Boolean.parseBoolean(filters[2]));//false
+            filter.setUnsolved(Boolean.parseBoolean(filters[3]));//true
+            filter.setLocked(Boolean.parseBoolean(filters[4]));//false
+            filter.setUnlocked(Boolean.parseBoolean(filters[5]));//false
+            filter.setLockedByMe(Boolean.parseBoolean(filters[6]));//false
+            filter.setHideReminders(Boolean.parseBoolean(filters[7]));//false
+            filter.setArchived(Boolean.parseBoolean(filters[8]));//false
 
             return filter;
         } catch (Exception e) {

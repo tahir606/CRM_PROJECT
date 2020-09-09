@@ -57,6 +57,7 @@ import java.util.logging.Logger;
 
 public class EmailDashController implements Initializable {
 
+
     @FXML
     private AnchorPane anchor_body, anchor_details;
     @FXML
@@ -107,7 +108,6 @@ public class EmailDashController implements Initializable {
         imgLoader.setVisible(true);
 
         list_emailsF = list_emails;
-
         anchor_details.setVisible(false);
 
         sql = new mySqlConn();
@@ -180,12 +180,17 @@ public class EmailDashController implements Initializable {
                 EResponseController.stBody = "\n\n\n" + "On " + sEmail.getTimeFormatted() + ", " + sEmail.getFromAddress
                         ()[0].toString() + " wrote:\n" + sEmail.getBody();
             } else if (newValue.equals("Forward")) {
-                EResponseController.stSubject = "FW: " + sEmail.getSubject();
-                EResponseController.stInstance = 'F';
-                EResponseController.stBody = sEmail.getBody();
-                System.out.println("body"+sEmail.getBody());
-                EResponseController.stAttach = sEmail.getAttch();
-                System.out.println("check"+sEmail.getAttch());
+                if (sEmail.getAttch() == null || sEmail.getAttch().isEmpty()) {
+                    EResponseController.stSubject = "FW: " + sEmail.getSubject();
+                    EResponseController.stInstance = 'F';
+                    EResponseController.stBody = sEmail.getBody();
+
+                } else {
+                    EResponseController.stSubject = "FW: " + sEmail.getSubject();
+                    EResponseController.stInstance = 'F';
+                    EResponseController.stBody = sEmail.getBody();
+                    EResponseController.stAttach = sEmail.getAttch();
+                }
             }
             inflateEResponse(1);
             combo_respond.getSelectionModel().select(0);
@@ -285,6 +290,7 @@ public class EmailDashController implements Initializable {
                                 }
                             } else {    //If email type other than tickets is selected no styling should be shown
                                 getStyleClass().remove("unlockedEmail");
+
                             }
                         } else {
                             Platform.runLater(() -> setText(""));
@@ -319,19 +325,25 @@ public class EmailDashController implements Initializable {
             createTicket.setOnAction(t -> {
                 Email selectedItem = list_emails.getSelectionModel().getSelectedItem();
                 selectedItem.setManual(user.getUCODE());
-                System.out.println(selectedItem);
+//                System.out.println(selectedItem);
+                sql.insertEmailManual(selectedItem);
                 sql.insertEmailManual(selectedItem);
                 sql.ArchiveEmail(Email_Type, " EMNO = " + selectedItem.getEmailNo());
                 loadEmails();
             });
             contextMenu.getItems().add(createTicket);
         }
-        if (Email_Type == 3) {
+
+        if (Email_Type == 3) { //resend email
             MenuItem sendAgain = new MenuItem("Send Again");
             sendAgain.setOnAction(t -> {
                 Email selectedItem = list_emails.getSelectionModel().getSelectedItem();
                 emailControl.sendEmail(selectedItem, null);
                 loadEmails();
+//                sql.getResendEmail(selectedItem,selectedItem.getEmailNo());
+//                emailControl.sendEmail(resendEmail,null);
+
+
             });
             contextMenu.getItems().add(sendAgain);
         }
@@ -341,7 +353,8 @@ public class EmailDashController implements Initializable {
         //Display Emails
         loadEmails();
     }
-//help
+
+    //help
     private List<Email> checkIfEmailsExist() {
 
         List<Email> emails = null;
@@ -360,7 +373,7 @@ public class EmailDashController implements Initializable {
                 break;
         }
 
-        System.out.println(emails);
+//        System.out.println(emails);
 
         if (emails == null) {
             emails = new ArrayList<>();
@@ -382,6 +395,10 @@ public class EmailDashController implements Initializable {
 
     private void inflateArchive() {
         inflateWindow("Archive", "Archive/archive.fxml");
+    }
+
+    private void inflateSearch() {
+        inflateWindow("Search", "GlobalSearching/SearchEmail.fxml");
     }
 
     //OPENING RESPONSE STAGE
@@ -414,6 +431,7 @@ public class EmailDashController implements Initializable {
             trayHelper tray = new trayHelper();
             tray.createIcon(stage2);
             Platform.setImplicitExit(true);
+            stage2.sizeToScene();
             stage2.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -429,7 +447,6 @@ public class EmailDashController implements Initializable {
 
     //Track Down which load Email is Running
     public void loadEmails() {
-        //yeh samj nai aaya
         Email temp = selectedEmail;
         list_emails.setItems(null);
         selectedEmail = temp;   //Because when list_emails is emptied selected email becomes null
@@ -499,7 +516,7 @@ public class EmailDashController implements Initializable {
 
         eSetting = sql.getEmailSettings();
         solvIndex = list_emails.getSelectionModel().getSelectedIndex();
-        System.out.println("Selected Index: " + solvIndex);
+//        System.out.println("Selected Index: " + solvIndex);
         if (!eSetting.isSolv()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to mark this as solved?\n" +
                     "This action cannot be taken back. No response will be issued.",
@@ -567,7 +584,9 @@ public class EmailDashController implements Initializable {
     List<ContactProperty> relatedContacts = new ArrayList<>();
     List<ClientProperty> relatedClients = new ArrayList<>();
 
-    private void populateDetails(Email email) {
+    //    private void populateDetails(Email email) {
+    public void populateDetails(Email email) {
+
         imgLoader.setVisible(true);
         new Thread(() -> Platform.runLater(() -> {
             try {
@@ -700,10 +719,7 @@ public class EmailDashController implements Initializable {
                     attFiles.add(file);
                 }
                 combo_attach.getItems().addAll(attFiles);
-
             }
-
-
 
             //----Ebody
             anchor_body.getChildren().clear();
@@ -762,7 +778,6 @@ public class EmailDashController implements Initializable {
 
             //Related Emails
             relatedEmails.getItems().clear();
-
             if (email.getRelatedEmails().size() > 0) {
                 ObservableList<Email> dataObj = FXCollections.observableArrayList(email.getRelatedEmails());
                 relatedEmails.setItems(dataObj);
@@ -777,8 +792,9 @@ public class EmailDashController implements Initializable {
             imgLoader.setVisible(false);
         })).start();
     }
-    private static WritableImage convertToJavaFXImage(byte[] raw, final double width, final double height)  {
-        WritableImage image = new WritableImage( Integer.parseInt(String.valueOf(width)),Integer.parseInt(String.valueOf(height)));
+
+    private static WritableImage convertToJavaFXImage(byte[] raw, final double width, final double height) {
+        WritableImage image = new WritableImage(Integer.parseInt(String.valueOf(width)), Integer.parseInt(String.valueOf(height)));
         try {
             ByteArrayInputStream bis = new ByteArrayInputStream(raw);
             BufferedImage read = ImageIO.read(bis);
@@ -794,7 +810,7 @@ public class EmailDashController implements Initializable {
 
     private int filterChoice = 0; //1 == tickets 2 == general
 
-    private void  populateFilters() {
+    private void populateFilters() {
         vbox_filter.setSpacing(10);
 
         Filters filter = Filters.readFromFile();
@@ -879,6 +895,10 @@ public class EmailDashController implements Initializable {
         archive.setOnAction(event -> inflateArchive());
         edit.getItems().add(archive);
 
+        MenuItem search = new MenuItem("Email Search");
+        search.setOnAction(event -> inflateSearch());
+        edit.getItems().add(search);
+
         menu_bar.getMenus().add(edit);
     }
 
@@ -945,7 +965,7 @@ public class EmailDashController implements Initializable {
         HBox.setMargin(combo, new Insets(0, 5, 0, 5));
     }
 
-    private void enableDisable(int i) {
+    public void enableDisable(int i) {
 
         if (i == 1) {   //Disable Everything
             anchor_body.setVisible(false);

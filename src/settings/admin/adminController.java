@@ -65,12 +65,12 @@ public class adminController implements Initializable {
         vbox_rights.setSpacing(10);
         vbox_rights.setPadding(new Insets(5, 10, 5, 2));
 
-        btn_archive.setOnAction(event -> {
-            if (userSel != null) {
-                sql.archiveUser(userSel);
-                init();
-            }
-        });
+//        btn_archive.setOnAction(event -> {
+//            if (userSel != null) {
+//                sql.archiveUser(userSel);
+//                init();
+//            }
+//        });
 
         btn_log_out_user.setVisible(false);
         btn_log_out_user.setOnAction(event -> {
@@ -122,8 +122,7 @@ public class adminController implements Initializable {
         if (isLoggedIn) {
             label_message.setVisible(true);
             btn_log_out_user.setVisible(true);
-        }
-        else {
+        } else {
             label_message.setVisible(false);
             btn_log_out_user.setVisible(false);
         }

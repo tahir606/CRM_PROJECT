@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class mySqlConn {
 
@@ -47,7 +48,7 @@ public class mySqlConn {
         Network network = fHelper.getNetworkDetails();
         if (network == null)
             return;
-        URL = "jdbc:mysql://" + network.getHost() + ":" + network.getPort() + "/" + DBNAME + "?allowMultiQueries=true";
+        URL = "jdbc:mysql://" + network.getHost() + ":" + network.getPort() + "/" + DBNAME + "?allowMultiQueries=true&autoReconnect=true";
         user = fHelper.ReadUserDetails();
         if (static_con == null)
             static_con = getConnection();
@@ -149,9 +150,9 @@ public class mySqlConn {
         userQueries.deleteUser(u);
     }
 
-    public void archiveUser(Users u) {
-        userQueries.archiveUser(u);
-    }
+//    public void archiveUser(Users u) {
+//        userQueries.archiveUser(u);
+//    }
 
     public boolean checkAndCreateUser() {
         return startupQueries.checkAndCreateUser();
@@ -642,17 +643,36 @@ public class mySqlConn {
         return emailQueries.average_Calculate();
     }
 
-    public int generateTicket() {
-        return  emailQueries.generateTicket();
-    }
-
     public int getManualTicketNo(Email em) {
         return emailQueries.getManualTicketNo(em);
     }
 
 
-//
-//    public List<EmailProperty> readSolvedEmailsByUsersFiltered(Users newValue, String reportFilter) {
-//        return emailQueries.readSolvedEmailsByUsersFiltered(newValue,reportFilter);
-//    }
+    public void updateResendEmail(Email email) {
+         emailQueries.updateResendEmail(email);
+    }
+
+    public Email readSearchEmail(int emailNo) {
+        return emailQueries.readSearchEmail(emailNo, userQueries);
+    }
+
+    public void insertBlackListKeywords(String[] array) {
+        domainQueries.insertBlackListKeywords(array);
+    }
+
+    public List<String> getBlackListKeyword() {
+        return domainQueries.getBlackListKeyword();
+    }
+
+    public void updateReplacementKeyword(String saveKeyword) {
+        settingsQueries.updateReplacementKeyword(saveKeyword);
+    }
+
+    public String getReplacementKeyword() {
+        return settingsQueries.getReplacementKeyword();
+    }
+
+    public void removeKeyword(String selectedItem) {
+        settingsQueries.removeKeyword(selectedItem);
+    }
 }

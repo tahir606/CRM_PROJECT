@@ -1,10 +1,13 @@
 package settings.email;
 
-import JCode.Toast;
 import JCode.FileHelper;
+import JCode.Toast;
 import JCode.mysql.mySqlConn;
 import JCode.trayHelper;
-import com.jfoenix.controls.*;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,7 +23,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import javafx.stage.*;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import objects.ESetting;
 
 import java.io.IOException;
@@ -56,9 +62,12 @@ public class emailSetController implements Initializable {
     private JFXListView<String> white_list;
     @FXML
     private JFXListView<String> black_list;
+    @FXML
+    private JFXListView<String> blacklist_keyword;
+    @FXML
+    private JFXTextField txt_saveKeyword;
 
     private static ESetting eSetting;
-
     private mySqlConn sql;
     private FileHelper fHelper;
 
@@ -76,7 +85,6 @@ public class emailSetController implements Initializable {
         autoText = eSetting.getAutotext();
         discText = eSetting.getDisctext();
         solvRespText = eSetting.getSolvRespText();
-
         try {
             populateCategoryBoxes();
         } catch (NullPointerException e) {
@@ -119,13 +127,19 @@ public class emailSetController implements Initializable {
     }
 
     void init() {
+        txt_saveKeyword.setText(sql.getReplacementKeyword());
         List<String> whiteList = sql.getWhiteBlackListDomains(1);
         List<String> blackList = sql.getWhiteBlackListDomains(2);
+
+        List<String> blackListKeyword = sql.getBlackListKeyword();// get blackList keyword and display in lestView
         try {
             white_list.getItems().clear();
             white_list.getItems().addAll(whiteList);
             black_list.getItems().clear();
             black_list.getItems().addAll(blackList);
+            blacklist_keyword.getItems().clear();
+            blacklist_keyword.getItems().addAll(blackListKeyword);
+
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -141,6 +155,16 @@ public class emailSetController implements Initializable {
         white_list.setContextMenu(contextMenu);
         white_list.setOnContextMenuRequested(event -> event.consume());
 
+//      remove keyword from right click
+        final ContextMenu replacedKeywordMenu = new ContextMenu();
+        MenuItem replacedKeywordItem = new MenuItem("Remove Keyword");
+        replacedKeywordItem.setOnAction(t -> {
+            sql.removeKeyword( blacklist_keyword.getSelectionModel().getSelectedItem());
+            init();
+        });
+        replacedKeywordMenu.getItems().add(replacedKeywordItem);
+        blacklist_keyword.setContextMenu(replacedKeywordMenu);
+        blacklist_keyword.setOnContextMenuRequested(event -> event.consume());
 
     }
 
@@ -354,6 +378,51 @@ public class emailSetController implements Initializable {
 
         stage.show();
 
+    }
+//      add blacklisted keywords
+    public void addKeyword(ActionEvent actionEvent) {
+
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initStyle(StageStyle.UTILITY);
+        stage.setTitle("Enter Black List Keyword");
+        VBox pane = new VBox();
+        pane.setMinWidth(200);
+        pane.setMinHeight(230);
+        for (int i = 0; i < noOfFields; i++) {
+            JFXTextField txt_data = new JFXTextField();
+            txt_data.setMinWidth(pane.getWidth());
+            txt_data.setPadding(new Insets(2, 2, 2, 2));
+            txt_data.setFocusColor(Paint.valueOf("#006e0e"));
+            pane.getChildren().add(txt_data);
+        }
+
+        stage.setScene(new Scene(pane));
+        trayHelper tray = new trayHelper();
+        tray.createIcon(stage);
+        Platform.setImplicitExit(true);
+
+        stage.setOnHiding(event -> {
+
+            String array[] = new String[noOfFields];
+
+            for (int i = 0; i < noOfFields; i++) {
+                String t = ((JFXTextField) pane.getChildren().get(i)).getText();
+                array[i] = t;
+            }
+
+            sql.insertBlackListKeywords(array);
+            init();
+
+        });
+
+        stage.show();
+
+    }
+//    add replacement keyword
+    public void addReplacementKeyword(ActionEvent actionEvent) {
+        String saveKeyword = txt_saveKeyword.getText();
+        sql.updateReplacementKeyword(saveKeyword); //this method update keyword which is save newKeyword in a text field
     }
 
     public void onGmail(ActionEvent actionEvent) {

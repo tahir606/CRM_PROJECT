@@ -27,7 +27,7 @@
         <JFXButton fx:id="btn_save" buttonType="RAISED" layoutX="818.0" layoutY="286.0" onAction="#saveChanges" prefHeight="45.0" prefWidth="80.0" styleClass="hbox_menu" stylesheets="@../../styles/settings.css" text="Save" AnchorPane.bottomAnchor="28.0" AnchorPane.rightAnchor="47.0" />
         <JFXCheckBox fx:id="check_email" layoutX="37.0" layoutY="261.0" text="Email Receiver" />
         <JFXButton fx:id="btn_delete" buttonType="RAISED" layoutX="712.0" layoutY="286.0" onAction="#deleteUser" prefHeight="45.0" prefWidth="80.0" styleClass="hbox_menu" stylesheets="@../../styles/settings.css" text="Delete" AnchorPane.bottomAnchor="28.0" AnchorPane.rightAnchor="153.0" />
-      <JFXButton fx:id="btn_archive" layoutX="31.0" layoutY="336.0" prefHeight="25.0" prefWidth="113.0" styleClass="hbox_menu" text="Archive User" />
+<!--      <JFXButton fx:id="btn_archive" layoutX="31.0" layoutY="336.0" prefHeight="25.0" prefWidth="113.0" styleClass="hbox_menu" text="Archive User" />-->
       <Label fx:id="label_message" layoutX="710.0" layoutY="95.0" prefHeight="17.0" prefWidth="188.0" text="User Is Logged In" textFill="#02006b" visible="false" AnchorPane.rightAnchor="47.0" AnchorPane.topAnchor="95.0" />
       <JFXButton fx:id="btn_log_out_user" layoutX="710.0" layoutY="118.0" prefHeight="25.0" prefWidth="113.0" styleClass="hbox_menu" text="Log Out User" AnchorPane.rightAnchor="122.0" AnchorPane.topAnchor="118.0" />
     </children>
