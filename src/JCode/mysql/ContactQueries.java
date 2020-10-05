@@ -177,9 +177,6 @@ public class ContactQueries {
                 " WHERE CS.CS_ID = ? ";
         
         query = query + " AND FREZE = 0 ORDER BY CS.CS_ID";
-        
-        System.out.println(where.getCode());
-        System.out.println(query);
         try {
             PreparedStatement statement = static_con.prepareStatement(query);
             statement.setInt(1, where.getCode());

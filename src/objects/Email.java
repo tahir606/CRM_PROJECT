@@ -19,6 +19,9 @@ public class Email {
     private char solvFlag, isAttch;
     private boolean isSent, freze, isEmailTypeSent = false;
     private String rawContent;
+    private List<Note> notes;
+
+
 
     public Email() {
     }
@@ -64,7 +67,8 @@ public class Email {
     public String getToAddressString() {
         String s = "";
         for (Address ad : toAddress) {
-            s = s + "^" + ad;
+            if(ad !=null) // my change
+                s = s + "^" + ad;
         }
         return s;
     }
@@ -378,5 +382,12 @@ public class Email {
         this.freze = freze;
     }
 
+    public List<Note> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<Note> notes) {
+        this.notes = notes;
+    }
 
 }

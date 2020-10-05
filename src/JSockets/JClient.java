@@ -49,7 +49,6 @@ public class JClient {
                         String d = dis.readUTF();
                         if (d.equals("R")) {
 //                            EmailDashController.reload = true;
-                            System.out.println("Listened for");
                             EmailDashController.loadEmailsStatic();
                         }
                         else {

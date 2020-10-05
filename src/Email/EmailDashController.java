@@ -10,6 +10,7 @@ import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import dashboard.dController;
+import gui.NotesConstructor;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -59,7 +60,7 @@ public class EmailDashController implements Initializable {
 
 
     @FXML
-    private AnchorPane anchor_body, anchor_details;
+    private AnchorPane anchor_body, anchor_details, anchor_remarks;
     @FXML
     private Label label_ticket, label_time, label_locked, label_created, title_created, label_from, title_locked, label_related_emails, label_count;
     @FXML
@@ -71,7 +72,7 @@ public class EmailDashController implements Initializable {
     @FXML
     private BorderPane border_email;
     @FXML
-    private VBox category_box, vbox_from, vbox_cc, vbox_contacts, vbox_clients, vbox_details, vbox_filter;
+    private VBox category_box, vbox_from, vbox_cc, vbox_contacts, vbox_clients, vbox_details, vbox_filter, vbox_Remarks;
     @FXML
     private HBox hbox_from, hbox_cc, hbox_clients, hbox_contacts;
     @FXML
@@ -99,6 +100,7 @@ public class EmailDashController implements Initializable {
     public int ticketNumberLatest,
             generalNumberLatest;
     private int ticketLastNumberSQL, generalLastNumberSQL;
+    TabPane tabPane = new TabPane();
 
     public EmailDashController() {
     }
@@ -109,7 +111,6 @@ public class EmailDashController implements Initializable {
 
         list_emailsF = list_emails;
         anchor_details.setVisible(false);
-
         sql = new mySqlConn();
         fHelper = new FileHelper();
 
@@ -141,13 +142,19 @@ public class EmailDashController implements Initializable {
         populateMenuBar();
         populateFilters();
 
+//        TabPane tabPane = new TabPane();
+        tabPane.setMinWidth(100);
+        tabPane.setMinHeight(100);
+
 //        Populating List
 //        Creates the changes in the Details Section
+//        list_emails.getSelectionModel().clearSelection();
         list_emails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+
             selectedEmail = newValue;
             populateDetails(selectedEmail);
+            populateRemarks();
         });
-
         //Attaching listener to attaching combo box
         combo_attach.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null)
@@ -184,7 +191,7 @@ public class EmailDashController implements Initializable {
                     EResponseController.stSubject = "FW: " + sEmail.getSubject();
                     EResponseController.stInstance = 'F';
                     EResponseController.stBody = sEmail.getBody();
-
+                    EResponseController.stAttach = null;
                 } else {
                     EResponseController.stSubject = "FW: " + sEmail.getSubject();
                     EResponseController.stInstance = 'F';
@@ -196,17 +203,28 @@ public class EmailDashController implements Initializable {
             combo_respond.getSelectionModel().select(0);
         });
 
-        relatedEmails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            populateDetails(newValue);
-            selectedEmail = null;
-            list_emails.getSelectionModel().select(null);
-            enableDisable(4);
-        });
+//        relatedEmails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+//            populateDetails(newValue);
+//            selectedEmail = null;
+//            list_emails.getSelectionModel().select(null);
+//            enableDisable(4);
+//        });
 
     }
 
-    private void changeEmailType(int type, JFXButton btn) {
+    public void populateRemarks() {
+        tabPane.getTabs().clear();
+        new NotesConstructor(tabPane, sql, selectedEmail).generalConstructor(5);
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        AnchorPane.setBottomAnchor(tabPane, 0.0);
+        AnchorPane.setTopAnchor(tabPane, 0.0);
+        AnchorPane.setRightAnchor(tabPane, 0.0);
+        AnchorPane.setLeftAnchor(tabPane, 0.0);
+        if (!anchor_remarks.getChildren().contains(tabPane)) // if anchorPane not contains tabPane then add tabPane
+            anchor_remarks.getChildren().add(tabPane);
+    }
 
+    private void changeEmailType(int type, JFXButton btn) {
         tickets.getStyleClass().remove("btnMenuBoxPressed");
         allMail.getStyleClass().remove("btnMenuBoxPressed");
         outbox.getStyleClass().remove("btnMenuBoxPressed");
@@ -238,7 +256,6 @@ public class EmailDashController implements Initializable {
                         super.updateItem(item, empty);
                         if (item != null) {
                             Platform.runLater(() -> setText(item.toString()));
-
 //                          This is so that the new emails would be displayed. Otherwise the formatting doesnt apply
                             if (item.getEmailNo() == list_emails.getItems().get(list_emails.getItems().size() - 1).getEmailNo()) {
                                 switch (Email_Type) {
@@ -339,6 +356,7 @@ public class EmailDashController implements Initializable {
             sendAgain.setOnAction(t -> {
                 Email selectedItem = list_emails.getSelectionModel().getSelectedItem();
                 emailControl.sendEmail(selectedItem, null);
+                System.out.println("send again");
                 loadEmails();
 //                sql.getResendEmail(selectedItem,selectedItem.getEmailNo());
 //                emailControl.sendEmail(resendEmail,null);
@@ -356,7 +374,6 @@ public class EmailDashController implements Initializable {
 
     //help
     private List<Email> checkIfEmailsExist() {
-
         List<Email> emails = null;
         switch (Email_Type) {
             case 1:     //Tickets
@@ -476,9 +493,10 @@ public class EmailDashController implements Initializable {
                 break;
             }
         }
-        if (isFound)
+        if (isFound) {
             list_emails.getSelectionModel().select(index);
-        else {
+            populateDetails(selectedEmail);
+        } else {
             enableDisable(1);
         }
 
@@ -549,7 +567,6 @@ public class EmailDashController implements Initializable {
             sentMail = new JFXButton("Sent");
 
     private void populateCategoryBoxes() {
-
         prepBtn(tickets);
         tickets.setOnAction(event -> changeEmailType(1, tickets));
 
@@ -586,7 +603,6 @@ public class EmailDashController implements Initializable {
 
     //    private void populateDetails(Email email) {
     public void populateDetails(Email email) {
-
         imgLoader.setVisible(true);
         new Thread(() -> Platform.runLater(() -> {
             try {
@@ -623,7 +639,7 @@ public class EmailDashController implements Initializable {
 
             } else if (Email_Type == 2) {
                 from = email.getFromAddress();
-            } else if (Email_Type == 4) {
+            } else if (Email_Type == 4 || Email_Type == 3) {
                 label_from.setText("To:");
                 from = email.getToAddress();
                 title_locked.setText("Sent By User: ");
@@ -775,20 +791,19 @@ public class EmailDashController implements Initializable {
                     enableDisable(5);
                 }
             }
-
-            //Related Emails
-            relatedEmails.getItems().clear();
-            if (email.getRelatedEmails().size() > 0) {
-                ObservableList<Email> dataObj = FXCollections.observableArrayList(email.getRelatedEmails());
-                relatedEmails.setItems(dataObj);
-
-                relatedEmails.setVisible(true);
-                label_related_emails.setVisible(true);
-            } else {
-                label_related_emails.setVisible(false);
-                relatedEmails.setVisible(false);
-            }
-
+//
+//            //Related Emails
+//            relatedEmails.getItems().clear();
+//            if (email.getRelatedEmails().size() > 0) {
+//                ObservableList<Email> dataObj = FXCollections.observableArrayList(email.getRelatedEmails());
+//                relatedEmails.setItems(dataObj);
+//
+//                relatedEmails.setVisible(true);
+//                label_related_emails.setVisible(true);
+//            } else {
+//                label_related_emails.setVisible(false);
+//                relatedEmails.setVisible(false);
+//            }
             imgLoader.setVisible(false);
         })).start();
     }

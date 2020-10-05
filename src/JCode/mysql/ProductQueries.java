@@ -160,7 +160,6 @@ public class ProductQueries {
                 product.setCreatedBy(set.getInt("CREATEDBY"));
                 
                 product.setProductModules(getAllProductModules(product.getCode()));
-                
                 product.setNotes(noteQueries.getNotes(product));
                 
                 return product;

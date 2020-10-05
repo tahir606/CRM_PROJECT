@@ -59,7 +59,7 @@ public class mySqlConn {
         eSetting = getEmailSettings();
         emailPhoneQueries = new EmailPhoneQueries(static_con);
         noteQueries = new NoteQueries(static_con, fHelper);
-        emailQueries = new EmailQueries(static_con, user, eSetting, emailPhoneQueries);
+        emailQueries = new EmailQueries(static_con, user, eSetting, emailPhoneQueries,noteQueries);
         contactQueries = new ContactQueries(static_con, fHelper, emailPhoneQueries, noteQueries);
         clientQueries = new ClientQueries(static_con, fHelper, emailPhoneQueries, noteQueries);
         leadQueries = new LeadQueries(static_con, fHelper, emailPhoneQueries, noteQueries);
@@ -407,7 +407,7 @@ public class mySqlConn {
         return leadQueries.getParticularLead(lead);
     }
 
-    public void checkAndPopulateSourcesonCreation() {
+    public void checkAndPopulateSourcesOnCreation() {
         leadQueries.checkAndPopulateSourcesOnCreation();
     }
 
@@ -674,5 +674,21 @@ public class mySqlConn {
 
     public void removeKeyword(String selectedItem) {
         settingsQueries.removeKeyword(selectedItem);
+    }
+
+    public Email getParticularEmail(Email email) {
+        return emailQueries.getParticularEmail(email);
+    }
+
+    public void addNote(String note, Email email) {
+        noteQueries.addNewNote(note, email);
+    }
+
+    public void deleteNote(Note note, Email email) {
+        noteQueries.deleteNote(note, email);
+    }
+
+    public void updateNote(Note note, Email email) {
+        noteQueries.updateNote(note, email);
     }
 }

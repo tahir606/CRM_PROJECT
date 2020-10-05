@@ -1,5 +1,6 @@
 package JCode.mysql;
 
+import Email.EResponse.EResponseController;
 import JCode.CommonTasks;
 import JCode.emailControl;
 import objects.*;
@@ -26,12 +27,14 @@ public class EmailQueries {
     private ESetting eSetting;
     private Users user;
     private EmailPhoneQueries emailPhoneQueries;
-
-    public EmailQueries(Connection static_con, Users user, ESetting eSetting, EmailPhoneQueries emailPhoneQueries) {
+    private NoteQueries noteQueries;
+    public EmailQueries(Connection static_con, Users user, ESetting eSetting, EmailPhoneQueries emailPhoneQueries, NoteQueries
+            noteQueries) {
         this.static_con = static_con;
         this.user = user;
         this.eSetting = eSetting;
         this.emailPhoneQueries = emailPhoneQueries;
+        this.noteQueries = noteQueries;
     }
 
     public Users getNoOfSolvedEmails(Users user) {
@@ -86,7 +89,7 @@ public class EmailQueries {
                 System.out.println(e);
                 splitted = address.toString();
             }
-            System.out.println("Email: " + splitted);
+            System.out.println("Email split : " + splitted);
             PreparedStatement statement = static_con.prepareStatement(mainQuery + " '%" + splitted + "%'");
             ResultSet set = statement.executeQuery();
             while (set.next()) {
@@ -466,7 +469,7 @@ public class EmailQueries {
     public static String autoReplySubject = "Burhani Customer Support - Ticket Number: ";
 
     private void autoReply(Email email, Message message) {
-
+        System.out.println("auto text:"+eSetting.getAutotext());
         String body = "<h3>The Ticket Number Issued to you is: <b>" + email.getEmailNo() + "</b></h3>\n" + eSetting.getAutotext();
 
         Email e = new Email();
@@ -550,6 +553,7 @@ public class EmailQueries {
 
         return 0;
     }
+
     // read solved emails by each user and display with two filters user select and days selection
     public List<EmailProperty> readSolvedEmailsByUsers(Users users, String reportFilter) {
 
@@ -825,7 +829,6 @@ public class EmailQueries {
         PreparedStatement statement = null;
 
         System.out.println(email.getTimestamp());
-
         try {
             statement = static_con.prepareStatement(query);
             statement.setString(1, email.getSubject());
@@ -1015,6 +1018,7 @@ public class EmailQueries {
             statement.setInt(2, user.getUCODE());
             statement.setString(3, email.getTimestamp());
             statement.setInt(4, email.getEmailNo());
+
             statement.executeUpdate();
             statement.close();
 
@@ -1042,15 +1046,16 @@ public class EmailQueries {
                 "<br><br><br>------------------- Ticket " + email.getEmailNo() + " -------------------" +
                 "<br><br>Timestamp:     <b>" + email.getTimeFormatted() + "</b>" +
                 "<br><br>Subject:       <b>" + email.getSubject() + "</b>" +
-                "<br><br>" + email.getBody();
-
-
+                "<br><br>" + email.getBody() ;
         Email send = new Email();
         send.setSubject(sb);
         send.setToAddress(email.getFromAddress());
         send.setCcAddress(email.getCcAddress());
         send.setBody(bd);
-
+        if(email.getAttch()==null || email.getAttch().isEmpty()){
+        }else{
+            send.setAttachments(EResponseController.addFile(email.getAttch()));
+        }
         emailControl.sendEmail(send, null);
 
     }
@@ -1127,6 +1132,7 @@ public class EmailQueries {
             e.printStackTrace();
         }
     }
+
     // this method calculate average for reporting which is display onclick Average time of ticket solved by each user
     public List<EmailProperty> average_Calculate() {
         String query = "SELECT FNAME, concat (concat ( concat ( substr(SEC_TO_TIME(AVG(TIME_TO_SEC(SOLVTIME) - TIME_TO_SEC(LOCKTIME))),1,2) , ' Hours ') , " +
@@ -1180,10 +1186,10 @@ public class EmailQueries {
     public void updateResendEmail(Email email) {
         String query = "UPDATE email_sent SET SENT=? where EMNO=?";
 
-        try{
+        try {
             PreparedStatement statement = static_con.prepareStatement(query);
-            statement.setBoolean(1,email.isSent());
-            statement.setInt(2,email.getEmailNo());
+            statement.setBoolean(1, email.isSent());
+            statement.setInt(2, email.getEmailNo());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException ex) {
@@ -1195,12 +1201,12 @@ public class EmailQueries {
         String query = "SELECT EMNO, MSGNO, SBJCT, FRADD, TOADD, CCADD, TSTMP, " +
                 " EBODY, ATTCH, ESOLV, LOCKD, LOCKTIME, SOLVBY, SOLVTIME, MANUAL FROM email_Store WHERE EMNO=? AND FREZE =0 ORDER BY EMNO Asc ";
 
-        Email email =new Email();
+        Email email = new Email();
 
         try {
             // Connection con = getConnection();
             PreparedStatement statement = static_con.prepareStatement(query);
-            statement.setInt(1,emailNo);
+            statement.setInt(1, emailNo);
             ResultSet set = statement.executeQuery();
             //-------------Creating Email-------------
             if (!set.isBeforeFirst()) {
@@ -1279,4 +1285,78 @@ public class EmailQueries {
 
     }
 
+    public Email getParticularEmail(Email email) {
+        if (email == null) {
+            return null;
+        }
+        String query = "Select  EMNO, MSGNO, SBJCT, FRADD, TOADD, CCADD, TSTMP," +
+                "               EBODY, ATTCH, ESOLV, LOCKD, LOCKTIME, SOLVTIME, MANUAL  from email_store AS ES Where EMNO =?";
+
+        try {
+            PreparedStatement statement = static_con.prepareStatement(query);
+            statement.setInt(1, email.getEmailNo());
+            ResultSet set = statement.executeQuery();
+            while (set.next()) {
+                Email email1 = new Email();
+                email1.setEmailNo(set.getInt("EMNO"));
+                email1.setMsgNo(set.getInt("MSGNO"));
+                email1.setSubject(set.getString("SBJCT"));
+                email1.setTimestamp(set.getString("TSTMP"));
+                email1.setTimeFormatted(CommonTasks.getTimeFormatted(email1.getTimestamp()));
+
+                email1.setBody(set.getString("EBODY"));
+                email1.setAttch(set.getString("ATTCH"));
+                email1.setSolvFlag(set.getString("ESOLV").charAt(0));
+                email1.setLockd(set.getInt("LOCKD"));
+                email1.setLockTime(set.getString("LOCKTIME"));
+                email1.setSolveTime(set.getString("SOLVTIME"));
+                email1.setManual(set.getInt("MANUAL"));
+
+
+                //------From Address
+                String[] from = set.getString("FRADD").split("\\^");
+                Address[] fromAddress = new Address[from.length];
+                for (int i = 1, j = 0; i < from.length; i++, j++) {
+                    try {
+                        fromAddress[j] = new InternetAddress(from[i]);
+                    } catch (AddressException e) {
+                        e.printStackTrace();
+                    }
+                }
+                email1.setFromAddress(fromAddress);
+
+                //-----To Address
+                String[] to = set.getString("TOADD").split("\\^");
+                Address[] toAddress = new Address[to.length];
+                for (int i = 1, j = 0; i < to.length; i++, j++) {
+                    try {
+                        toAddress[j] = new InternetAddress(to[i]);
+                    } catch (AddressException e) {
+                        e.printStackTrace();
+                    }
+                }
+                email1.setToAddress(toAddress);
+
+                //----- CC Address
+                String[] cc = set.getString("CCADD").split("\\^");
+                Address[] ccAddress = new Address[cc.length];
+                for (int i = 1, j = 0; i < cc.length; i++, j++) {
+                    try {
+                        ccAddress[j] = new InternetAddress(cc[i]);
+                    } catch (AddressException e) {
+                        e.printStackTrace();
+                    }
+                }
+                email1.setCcAddress(ccAddress);
+
+                email1.setNotes(noteQueries.getNotes(email1));
+                return email1;
+            }
+
+            // doRelease(con);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
 }

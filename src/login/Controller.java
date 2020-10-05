@@ -49,7 +49,7 @@ public class Controller implements Initializable {
         //And populate the rights list
         sql.checkAndPopulateRights();
         //And populate sources
-        sql.checkAndPopulateSourcesonCreation();
+        sql.checkAndPopulateSourcesOnCreation();
         //And populate Notification Settings
         sql.checkOnNotificationSettings();
 

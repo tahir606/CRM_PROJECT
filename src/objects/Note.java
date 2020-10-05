@@ -4,17 +4,27 @@ import JCode.CommonTasks;
 
 public class Note {
     
-    private int code, createdBy, contact, client;
+    private int code, createdBy, contact, client,emailNo;
     private String text, createdOn, createdByName, contactName;
     
     public Note() {
     }
-    
+
+
+
     @Override
     public String toString() {
         return "" + text + "        " + createdOn + "       " + createdByName;
     }
-    
+
+    public int getEmailNo() {
+        return emailNo;
+    }
+
+    public void setEmailNo(int emailNo) {
+        this.emailNo = emailNo;
+    }
+
     public int getCode() {
         return code;
     }

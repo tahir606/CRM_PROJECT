@@ -1,15 +1,12 @@
 package JCode.mysql;
 
-import JCode.CommonTasks;
 import objects.ClientProperty;
-import objects.EmailProperty;
 import objects.Users;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,14 +44,10 @@ public class ReportQueries {
 
 
     public List<ClientProperty> emailsPerClient(String filter) {
-        String query = "SELECT CL_ID, CL_NAME, CL_OWNER,  " +
-                "     (SELECT COUNT(ER.EMNO) FROM email_relation ER, email_store ES  " +
-                "     WHERE ER.CL_ID = CS.CL_ID " +
-                "     AND ER.EMNO = ES.EMNO " +
-                "     " + filter + ") AS EMNO " +
-                "FROM client_store CS  " +
-                "WHERE CL_ID != 0  " +
-                "ORDER BY EMNO DESC ";
+        String query = "SELECT CL_ID, CL_NAME, CL_OWNER, (SELECT COUNT(ES.EMNO) FROM email_list ER, email_store ES " +
+                "WHERE ER.CL_ID =  CS.CL_ID AND ES.FRADD LIKE CONCAT("+"'%',er.EM_NAME,'%'"+") "+filter+" ) AS EMNO " +
+                " FROM client_store CS WHERE CL_ID != 0 ORDER BY `EMNO`  DESC";
+
         System.out.println(query);
         List<ClientProperty> clients = new ArrayList<>();
         try {

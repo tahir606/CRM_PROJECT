@@ -39,6 +39,7 @@ import java.util.ResourceBundle;
 
 public class EResponseController implements Initializable {
 
+    public List<File> fileList;
     @FXML
     private TextField txt_to, txt_cc, txt_bcc, txt_attach, txt_subject;
     @FXML
@@ -57,14 +58,13 @@ public class EResponseController implements Initializable {
     private JFXCheckBox sendAsEmail;
     public static volatile int choice = 1;      //1- Send Email 2-Create Ticket
     private File file;
-    private List<File> fileList;
     private List<Document> attachedDocuments;
 
     private emailControl helper = new emailControl();
     private FileHelper fileHelper;
 
     String Subject, Email, cc, bcc, Body, Disclaimer;
-    String attachment;
+
 
     public static String stSubject, stTo, stCc, stBcc, stBody, stAttach;
     public static char stInstance;
@@ -116,24 +116,26 @@ public class EResponseController implements Initializable {
             btn_Send.setText("Reply");
 
         } else if (stInstance == 'F') {
-            if(stAttach==null){
+            if (stAttach == null) {
 
 //                txt_attach.setVisible(false);
-            }else{
-                fileList = new ArrayList<>();
-                for (String c : stAttach.split("\\^")) {
-                    FileDev file = new FileDev(c);
-                    fileList.add(file);
-                }
+            } else {
+                fileList = addFile(stAttach);
                 String at = "";
                 if (fileList != null) {
                     for (File f : fileList) {
                         at = at + " -- " + f.getName();
                     }
-                    txt_attach.setText(at);
-
-                    txt_attach.setVisible(true);
                 }
+//                if (fileList != null) {
+//                    for (File f : fileList) {
+//                        at = at + " -- " + f.getName();
+//                    }
+//                }
+//                return at;
+//                txt_attach.setText(addFile());
+                txt_attach.setText(at);
+                txt_attach.setVisible(true);
             }
 
             txt_body.setText(stBody);
@@ -151,6 +153,16 @@ public class EResponseController implements Initializable {
         }
     }
 
+    public static List<File> addFile(String attach) {
+        List<File> newFileList = new ArrayList<>();
+
+        for (String c : attach.split("\\^")) {
+            FileDev file = new FileDev(c);
+            newFileList.add(file);
+        }
+        return newFileList;
+    }
+
     private void populateTo() {
         if (stTo.equals(""))
             return;
@@ -161,7 +173,6 @@ public class EResponseController implements Initializable {
     }
 
     private void populateCC() {
-
         if (stCc == null)
             return;
         else if (stCc.equals(""))
@@ -176,20 +187,29 @@ public class EResponseController implements Initializable {
         txt_field.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null)
                 return;
-
             if (newValue.contains(",")) {
-                HBox hb = new HBox();
-                Label l = new Label(newValue.split("\\,")[0]);
-                l.setMaxWidth(120);
-                l.setAccessibleText("txt");
-                JFXButton b = new JFXButton("x");
-                b.setStyle("-fx-font-size: 5pt");
-                b.setOnAction(event -> box.getChildren().remove(hb));
-                hb.getChildren().addAll(l, b);
+//                if (validateAddress(newValue)) {
+                    HBox hb = new HBox();
+                    Label l = new Label(newValue.split("\\,")[0]);
+                    l.setMaxWidth(120);
+                    l.setAccessibleText("txt");
+                    JFXButton b = new JFXButton("x");
+                    b.setStyle("-fx-font-size: 5pt");
+                    b.setOnAction(event -> box.getChildren().remove(hb));
+                    hb.getChildren().addAll(l, b);
+                    box.getChildren().add(hb);
+                    txt_field.setText("");
+//                } else {
+//                    newValue=newValue.replaceAll(",",""); // replace comma for correcting valid email
+//                    Alert alert = new Alert(Alert.AlertType.WARNING, "Email Entered is Invalid",
+//                            ButtonType.OK);
+//                    alert.showAndWait();
+//                    txt_field.setText(newValue);
+//                    return;
+//                }
 
-                box.getChildren().add(hb);
-                txt_field.setText("");
             }
+
         });
     }
 
@@ -209,7 +229,6 @@ public class EResponseController implements Initializable {
     public void btnSendClick(ActionEvent actionEvent) {
         Subject = txt_subject.getText();
         Body = txt_body.getText();
-        Email = txt_to.getText();
         cc = "";
         bcc = "";
         Disclaimer = "";
@@ -244,22 +263,24 @@ public class EResponseController implements Initializable {
         } catch (AddressException e) {
             e.printStackTrace();
         }
+
         Address ad[] = to_emails.toArray(new Address[to_emails.size()]);
         em.setToAddress(ad);
 
-        if (em.getToAddress().length < 0 || Body.equals("")) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Required Fields are Empty",
+        if(em.getToAddressString().isEmpty()){ // check txtField is empty or Not
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Required To Address is Empty",
                     ButtonType.OK);
             alert.showAndWait();
-
-            if (alert.getResult() == ButtonType.OK) {
-                return;
-            } else {
-                return;
-            }
+            return;
         }
-
-
+//        if (validateAddress(txt_to.getText() ) || !em.getToAddressString().isEmpty()) { // check email pattern
+//        } else {
+//            Alert alert = new Alert(Alert.AlertType.WARNING, "Required To Address is Invalid",
+//                    ButtonType.OK);
+//            alert.showAndWait();
+//
+//            return;
+//        }
         //--------------CC
         List<Address> cc_emails = new ArrayList<>();
         for (Node n : hbox_cc.getChildren()) {
@@ -289,8 +310,13 @@ public class EResponseController implements Initializable {
         Address cc[] = cc_emails.toArray(new Address[cc_emails.size()]);
         em.setCcAddress(cc);
 
-//        System.out.println(Arrays.toString(em.getCcAddress()));
-
+//        if (validateAddress(txt_cc.getText()) || txt_cc.getText().equals("")) { // check email pattern
+//        } else {
+//            Alert alert = new Alert(Alert.AlertType.WARNING, "Required CC Address is Invalid",
+//                    ButtonType.OK);
+//            alert.showAndWait();
+//            return;
+//        }
         //--------------BCC
         List<Address> bcc_emails = new ArrayList<>();
         for (Node n : hbox_bcc.getChildren()) {
@@ -320,15 +346,23 @@ public class EResponseController implements Initializable {
         Address bcc[] = bcc_emails.toArray(new Address[bcc_emails.size()]);
         em.setBccAddress(bcc);
 
+//        if (validateAddress(txt_bcc.getText()) || txt_bcc.getText().equals("")) { // check email pattern
+//        } else {
+//            Alert alert = new Alert(Alert.AlertType.WARNING, "Required Bcc Address is Invalid",
+//                    ButtonType.OK);
+//            alert.showAndWait();
+//
+//            return;
+//        }
         em.setSubject(Subject);
         //Replace Line Breaks with <br> tags
         Body = Body.replace("\n", "<br>");
         em.setBody(Body);
         em.setDisclaimer(Disclaimer);
         if (fileList == null) {
-        } else if (fileList.size() > -1)
+        } else if (fileList.size() > -1) {
             em.setAttachments(fileList);
-        else
+        } else
             em.setAttch("");
 
         if (attachedDocuments != null) {
@@ -415,5 +449,16 @@ public class EResponseController implements Initializable {
             }
         }).start();
     }
+//  Pattern checked of email if is it true your email pattern is correct else generate error
+//    private boolean validateAddress(String email) {
+//        Pattern p = Pattern.compile("[a-zA-Z0-9^][a-zA-Z0-9.< ]*@[a-zA-Z0-9]+([.][a-zA-Z> ,]+)+");
+//        Matcher m = p.matcher(email);
+//        if (m.find() && m.group().equals(email)) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+
 
 }

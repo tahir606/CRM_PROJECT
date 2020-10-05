@@ -233,7 +233,7 @@ public class newClientController implements Initializable {
         inflateBOX(2);
     }
 
-    public static int noOfFields = 10;
+    public static int noOfFields = 30;
 
     private void inflateBOX(int c) {
 
@@ -301,9 +301,9 @@ public class newClientController implements Initializable {
                     }
                 }
             }
-            if (c == 1)
+            if (c == 1) {
                 clientSel.setEmails(array);
-            else if (c == 2)
+            }else if (c == 2)
                 clientSel.setPhones(array);
         });
 

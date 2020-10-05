@@ -79,7 +79,6 @@ public class emailControl {
             inbox.open(Folder.READ_WRITE);      //Read_Write Is Necessary For Marking Emails as Read.
             FlagTerm ft = new FlagTerm(new Flags(Flags.Flag.SEEN), false);
             Message messages[] = inbox.search(ft);
-
             String result;
             int i = 0;
 
@@ -126,8 +125,8 @@ public class emailControl {
         Address[] toAddress = message.getRecipients(Message.RecipientType.TO);
         Address[] ccAddress = message.getRecipients(Message.RecipientType.CC);
 
-
         SUBJECT = message.getSubject();
+
         if (SUBJECT.equals(""))
             SUBJECT = "No Subject";
 
@@ -161,7 +160,7 @@ public class emailControl {
         email.setSolvFlag('N');
         email.setLockd(0);
         email.setFreze(false);
-        System.out.println("store file: " + email);
+        System.out.println("Email:"+email);
         int tix = 1;    //2 means ticket 1 means general
 
         for (String t : white_list) {
@@ -230,7 +229,6 @@ public class emailControl {
     }
 
     public static void sendEmail(Email email, Message messageReply) {
-
         String perDisc;
 
         if (email.getDisclaimer() == null) {
@@ -312,7 +310,8 @@ public class emailControl {
 
             if (email == null)
                 return;
-
+//            String attach = email.getAttch();
+//lets check
             String attach = ""; //String to save in the database
             if (email.getAttachments() == null) {
             } else if (!(email.getAttachments().size() < 0)) {
@@ -324,7 +323,8 @@ public class emailControl {
                         attachment.setDataHandler(new DataHandler(source));
                         attachment.setFileName(f.getName());
                         attach = attach + f.getAbsolutePath() + "^";    //Concatenating String for Database
-                    } else {
+                    }
+                    else {
                         trayHelper.trayIcon.displayMessage("IOException", "File Not Found", TrayIcon.MessageType.ERROR);
                     }
                     multipart.addBodyPart(attachment);

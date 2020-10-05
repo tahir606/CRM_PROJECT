@@ -69,7 +69,6 @@ public class sentController implements Initializable {
     Address[] to, cc, bcc;
 
     private void populateDetails(Email email) {
-
         new Thread(() -> Platform.runLater(() -> {
 
             label_time.setText(email.getTimeFormatted());
