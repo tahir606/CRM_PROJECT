@@ -11,7 +11,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import lead.newLead.NewLeadController;
-import product.newProduct.NewProductController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -60,7 +59,8 @@ public class LeadDashController implements Initializable {
                     try {
                         main_pane.setCenter(FXMLLoader.load(getClass().getResource(pane)));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                     img_loader.setVisible(false);
                 });

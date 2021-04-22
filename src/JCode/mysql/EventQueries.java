@@ -44,7 +44,8 @@ public class EventQueries {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -221,7 +222,8 @@ public class EventQueries {
             statement.setInt(7, event.getCode());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -238,7 +240,8 @@ public class EventQueries {
             statement.setInt(3, event.getCode());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -252,7 +255,8 @@ public class EventQueries {
             statement.setInt(1, event.getCode());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -267,7 +271,8 @@ public class EventQueries {
             statement.setInt(1, event.getCode());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 }

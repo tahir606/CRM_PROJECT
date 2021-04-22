@@ -6,7 +6,6 @@ import JCode.mysql.mySqlConn;
 import activity.ActivityDashController;
 import activity.view.ActivityViewController;
 import client.dash.clientView.clientViewController;
-import client.dash.contactView.contactViewController;
 import com.jfoenix.controls.*;
 import gui.EventsConstructor;
 import javafx.fxml.FXML;
@@ -18,8 +17,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import lead.view.LeadViewController;
-import objects.*;
-import product.view.ProductViewController;
+import objects.ClientProperty;
+import objects.Event;
+import objects.Lead;
+import objects.ProductProperty;
 
 import java.io.IOException;
 import java.net.URL;
@@ -95,7 +96,7 @@ public class NewEventController implements Initializable {
                 btn_save.setText("Update");
 
                 currEvent = ActivityViewController.staticEvent;
-                System.out.println(currEvent);
+                System.out.println("Current Event Is :" +currEvent);
                 populateFields(currEvent);
                 break;
             }
@@ -145,10 +146,6 @@ public class NewEventController implements Initializable {
                 toTime = to_time.getValue().toString();
             boolean allDay = check_allDay.isSelected();
 
-//            System.out.println("FDATE: " + fromDate + "\n" +
-//                    "FTIME: " + fromTime + "\n" +
-//                    "TDATE: " + toDate + "\n" +
-//                    "TTIME: " + toTime);
 
             if (title.equals("") || loc.equals("") || desc.equals("") || fromDate == null || toDate == null) {
                 Toast.makeText((Stage) btn_save.getScene().getWindow(), "Required Fields Are Empty");

@@ -56,8 +56,6 @@ public class newClientController implements Initializable {
     private JFXDatePicker joining_date;
     @FXML
     private JFXComboBox<String> combo_type;
-    //    @FXML
-//    private JFXComboBox<Client> combo_client;
     @FXML
     private JFXButton btn_save;
 
@@ -85,7 +83,8 @@ public class newClientController implements Initializable {
                                 getClass().getClassLoader().getResource("client/dash/clientView/clientView.fxml")));
 
             } catch (IOException e) {
-                e.printStackTrace();
+                e.getLocalizedMessage();
+//                e.printStackTrace();
             }
         });
 
@@ -169,7 +168,7 @@ public class newClientController implements Initializable {
                 country = txt_country.getText(),
                 jdate = String.valueOf(joining_date.getValue());
 
-        System.out.println(owner);
+
 
         int type = combo_type.getSelectionModel().getSelectedIndex() + 1;
 

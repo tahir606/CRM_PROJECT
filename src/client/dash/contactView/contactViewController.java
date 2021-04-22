@@ -95,7 +95,8 @@ public class contactViewController implements Initializable {
                                         getClass().getClassLoader().getResource
                                                 ("client/dash/contactView/contactDetails/contactDetails.fxml")));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                 }
             });
@@ -135,7 +136,8 @@ public class contactViewController implements Initializable {
             Platform.setImplicitExit(true);
             stage2.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 }

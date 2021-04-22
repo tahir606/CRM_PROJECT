@@ -325,7 +325,8 @@ public class TasksConstructor {
             Platform.setImplicitExit(true);
             stage2.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 

@@ -49,6 +49,7 @@ public class mySqlConn {
         if (network == null)
             return;
         URL = "jdbc:mysql://" + network.getHost() + ":" + network.getPort() + "/" + DBNAME + "?allowMultiQueries=true&autoReconnect=true";
+
         user = fHelper.ReadUserDetails();
         if (static_con == null)
             static_con = getConnection();
@@ -73,18 +74,9 @@ public class mySqlConn {
 
     private Connection getConnection() {
         int times = 1;
-
-//        if (static_con != null) {
-//            try {
-//                static_con.close();
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
         while (true) {
             try {
-                System.out.println("Trying: " + times);
+                System.out.println("Trying To Connect With DataBase : " + times);
                 Class.forName("com.mysql.jdbc.Driver");
 //                System.out.println(URL + "\n" + USER + "\n" + PASSWORD);
                 Connection con = DriverManager.getConnection(
@@ -92,7 +84,8 @@ public class mySqlConn {
                 return con;
             } catch (SQLException | ClassNotFoundException e) {
                 times++;
-                e.printStackTrace();
+                e.getLocalizedMessage();
+//                e.printStackTrace();
                 System.out.println("Sleeping for 10 Seconds");
                 try {
                     Thread.sleep(10000);
@@ -226,7 +219,7 @@ public class mySqlConn {
         emailQueries.lockEmail(email, op);
     }
 
-    public void solvEmail(Email email, String flag, Users user, boolean choice, String msg) {
+    public void solvEmail(Email email, String flag, int user, boolean choice, String msg) {
         emailQueries.solvEmail(email, flag, user, choice, msg);
     }
 
@@ -690,5 +683,26 @@ public class mySqlConn {
 
     public void updateNote(Note note, Email email) {
         noteQueries.updateNote(note, email);
+    }
+
+    public List<EmailProperty> clientReportWithDomain(ClientProperty clientProperty, String reportFilter) {
+        return  reportQueries.clientReportWithDomain(clientProperty,reportFilter);
+    }
+
+    public List<ClientProperty> clientName() {
+        return clientQueries.clientName();
+    }
+
+    public String getUserRight(int code) {
+        return userQueries.getUserRight(code);
+
+    }
+
+    public boolean updateLockEmail(Users newValue, Email email,int op) {
+        return  emailQueries.lockEmailByAdmin(email,newValue,op);
+    }
+
+    public boolean updateEmailForResolve(Email selectedEmail) {
+        return emailQueries.updateEmailForResolve(selectedEmail);
     }
 }

@@ -50,7 +50,8 @@ public class CommonTasks {
         try {
             date = inputFormat.parse(timeStamp);
         } catch (ParseException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } catch (NullPointerException e) {
             System.out.println(e);
             return null;
@@ -85,7 +86,8 @@ public class CommonTasks {
         try {
             date = inputFormat.parse(timeStamp);
         } catch (ParseException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
         String outputText = outputFormat.format(date);
         return outputText;
@@ -100,7 +102,8 @@ public class CommonTasks {
         try {
             date = inputFormat.parse(timeStamp);
         } catch (ParseException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } catch (NullPointerException e) {
             return "";
         }
@@ -137,7 +140,8 @@ public class CommonTasks {
             date1 = inputFormat.parse(d1);
             date2 = inputFormat.parse(d2);
         } catch (ParseException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } catch (NullPointerException e) {
             return "";
         }
@@ -163,7 +167,8 @@ public class CommonTasks {
         try {
             date = inputFormat.parse(timeStamp);
         } catch (ParseException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         Calendar calendar = new GregorianCalendar();
@@ -198,7 +203,8 @@ public class CommonTasks {
             Platform.setImplicitExit(true);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -232,43 +238,27 @@ public class CommonTasks {
 
 
     public static String getTimeDuration(String locktime, String solvtime) throws ParseException {
-
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-        Date date1 = null, date2;
+        Date date1 = null;
+        Date date2 = null;
         long diff = 0;
-        if(locktime == null) {
-            date2 = inputFormat.parse(solvtime);
+        String str;
+        if (solvtime == null || locktime == null) {
+            str = "";
         } else {
             date1 = inputFormat.parse(locktime);
             date2 = inputFormat.parse(solvtime);
-            diff= date2.getTime() - date1.getTime();
+            diff = date2.getTime() - date1.getTime();
+            int diffDays = (int) (diff / (24 * 60 * 60 * 1000));
+            int diffHours = (int) (diff / (60 * 60 * 1000));
+            int hours = diffHours - (24 * diffDays);
+
+            int diffMin = (int) (diff / (60 * 1000));
+            int min = diffMin - (diffHours * 60);
+            str = (diffDays + " Days " + hours + " Hours " + min + " Minutes ");
         }
-
-        
-        int diffDays = (int) (diff / (24 * 60 * 60 * 1000));
-        int diffHours = (int) (diff / (60 * 60 * 1000));
-        int hours = diffHours - (24 * diffDays);
-
-        int diffMin = (int) (diff / (60 * 1000));
-        int min = diffMin - (diffHours * 60);
-        String str = (diffDays + " Days " + hours + " Hours " + min + " Minutes ");
         return str;
 
     }
-//    public static String averageTime(String solvtime) throws ParseException {
-//
-//        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-//        Date date2 = inputFormat.parse(solvtime);
-//        long diff =date2.getTime();
-//        int diffDays = (int) (diff / (24 * 60 * 60 * 1000));
-//        int diffHours = (int) (diff / (60 * 60 * 1000));
-//        int hours =diffHours-(24*diffDays);
-//
-//        int diffMin = (int) (diff / (60 * 1000));
-//        int min =diffMin-(diffHours*60);
-//        String str = (hours+" Hours "+min+" Minutes ");
-//        return str;
-//
-//    }
 
 }

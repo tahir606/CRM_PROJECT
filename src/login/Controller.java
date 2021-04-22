@@ -118,7 +118,8 @@ public class Controller implements Initializable {
                         try {
                             root1 = fxmlLoader.load();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            e.getLocalizedMessage();
+//                            e.printStackTrace();
                         }
                         Stage stage = new Stage();
                         stage.setTitle("Burhani It Solutions - Customer Relationship Management");

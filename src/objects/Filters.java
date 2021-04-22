@@ -11,7 +11,7 @@ public class Filters {
             unlocked,
             lockedByMe,
             hideReminders,
-            archived;
+            archived, isAllocate;
     private static FileHelper fHelper;
 
     public Filters() {
@@ -27,7 +27,7 @@ public class Filters {
             filters = filters + " AND ESOLV = 'S' ";
         }
         if (unsolved) {
-            filters = filters + " AND ESOLV = 'N' ";
+            filters = filters + " AND ESOLV = 'N' AND isResolve = 0 ";
         }
         if (locked) {
             filters = filters + " AND LOCKD != 0 ";
@@ -49,7 +49,9 @@ public class Filters {
         } else {
             filters = filters + " AND FREZE = 0 ";
         }
-
+        if (isAllocate) {
+            filters = filters + "AND isResolve != 0  AND ESOLV = 'N'";
+        }
         filters = filters + " ORDER BY " + sortBy + " " + ascDesc;
 
         return filters;
@@ -57,7 +59,7 @@ public class Filters {
 
     public void writeToFile() {
         String filter;
-        filter = getSortBy() + "," + ascDesc + "," + solved + "," + unsolved + "," + locked + "," + unlocked + "," + lockedByMe + "," + hideReminders + "," + archived;
+        filter = getSortBy() + "," + ascDesc + "," + solved + "," + unsolved + "," + locked + "," + unlocked + "," + lockedByMe + "," + hideReminders + "," + archived + "," + isAllocate;
         fHelper.WriteFilter(filter);
     }
 
@@ -79,10 +81,13 @@ public class Filters {
             filter.setLockedByMe(Boolean.parseBoolean(filters[6]));//false
             filter.setHideReminders(Boolean.parseBoolean(filters[7]));//false
             filter.setArchived(Boolean.parseBoolean(filters[8]));//false
+            filter.setAllocate(Boolean.parseBoolean(filters[9]));
+
 
             return filter;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             Filters ft = new Filters();
             ft.setSortBy("Tickets");
             ft.setAscDesc("Desc");
@@ -91,6 +96,7 @@ public class Filters {
             ft.setLocked(false);
             ft.setUnlocked(false);
             ft.setArchived(false);
+
             return ft;
         }
     }
@@ -126,6 +132,14 @@ public class Filters {
                 this.sortBy = "SBJCT";
                 break;
         }
+    }
+
+    public boolean isAllocate() {
+        return isAllocate;
+    }
+
+    public void setAllocate(boolean allocate) {
+        isAllocate = allocate;
     }
 
     public String getAscDesc() {

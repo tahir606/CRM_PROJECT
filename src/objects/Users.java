@@ -138,6 +138,8 @@ public class Users {
         public uRights() {
         }
 
+
+
         public int getRCODE() {
             return RCODE;
         }

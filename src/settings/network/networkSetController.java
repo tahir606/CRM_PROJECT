@@ -76,7 +76,8 @@ public class networkSetController implements Initializable {
                     try {
                         root = FXMLLoader.load(getClass().getResource("../../login/login.fxml"));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                     primaryStage.setTitle("Login- BITS-CRM");
                     primaryStage.setScene(new Scene(root, 900, 400));;
@@ -87,7 +88,8 @@ public class networkSetController implements Initializable {
                     try {
                         root = FXMLLoader.load(getClass().getResource("../../dashboard/dashboard.fxml"));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                     primaryStage.setTitle("Dashboard- BITS-CRM");
                     primaryStage.setScene(new Scene(root, 1200, 500));

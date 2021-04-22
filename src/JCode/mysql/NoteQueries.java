@@ -75,9 +75,7 @@ public class NoteQueries {
         List<Note> notes = new ArrayList<>();
 
         try {
-//            System.out.println(query);
             PreparedStatement statement = static_con.prepareStatement(query);
-            System.out.println("contact.getContact:" + contact.getCode());
             statement.setInt(1, contact.getCode());
             ResultSet set = statement.executeQuery();
             //-------------Creating Email-------------
@@ -171,7 +169,6 @@ public class NoteQueries {
         List<Note> notes = new ArrayList<>();
 
         try {
-//            System.out.println(query);
             PreparedStatement statement = static_con.prepareStatement(query);
             statement.setInt(1, client.getCode());
             ResultSet set = statement.executeQuery();
@@ -267,7 +264,6 @@ public class NoteQueries {
         List<Note> notes = new ArrayList<>();
 
         try {
-//            System.out.println(query);
             PreparedStatement statement = static_con.prepareStatement(query);
             statement.setInt(1, lead.getCode());
             ResultSet set = statement.executeQuery();
@@ -362,7 +358,6 @@ public class NoteQueries {
         List<Note> notes = new ArrayList<>();
 
         try {
-//            System.out.println(query);
             PreparedStatement statement = static_con.prepareStatement(query);
             statement.setInt(1, product.getCode());
             ResultSet set = statement.executeQuery();
@@ -415,7 +410,6 @@ public class NoteQueries {
         List<Note> notes = new ArrayList<>();
 
         try {
-//            System.out.println(query);
             PreparedStatement statement = static_con.prepareStatement(query);
 
             statement.setInt(1, email.getEmailNo());

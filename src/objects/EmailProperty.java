@@ -2,16 +2,13 @@ package objects;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
-import javax.mail.Address;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmailProperty {
     private SimpleIntegerProperty email_No;
-    private SimpleStringProperty timestamp, from_Address, subject, email_Body, lock_time, solve_Time,duration,average,user_name;
+    private SimpleStringProperty timestamp, from_Address, subject, email_Body, lock_time, solve_Time,duration,average,user_name,remarks,typeOfWork;
     private boolean isEmailTypeSent = false;
     private List<EmailProperty> relatedEmails = new ArrayList<>();
 
@@ -26,6 +23,32 @@ public class EmailProperty {
         duration =new SimpleStringProperty();
         average = new SimpleStringProperty();
         user_name = new SimpleStringProperty();
+        remarks = new SimpleStringProperty();
+        typeOfWork = new SimpleStringProperty();
+    }
+
+    public String getTypeOfWork() {
+        return typeOfWork.get();
+    }
+
+    public SimpleStringProperty typeOfWorkProperty() {
+        return typeOfWork;
+    }
+
+    public void setTypeOfWork(String typeOfWork) {
+        this.typeOfWork.set(typeOfWork);
+    }
+
+    public String getRemarks() {
+        return remarks.get();
+    }
+
+    public SimpleStringProperty remarksProperty() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks.set(remarks);
     }
 
     public String getAverage() {

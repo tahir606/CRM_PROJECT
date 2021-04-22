@@ -53,12 +53,9 @@ public class emailControl {
         white_list = sqlConn.getWhiteBlackListDomains(1);
         blackListKeyword = sqlConn.getBlackListKeyword();
         replacementKeyword = sqlConn.getReplacementKeyword();
-//
-//        blackListKey = String.join(",", blackListKeyword);
-//        System.out.println("ok :"+blackListKey);
+
         if (ESETTING != null) {
             F_ADD = ESETTING.getFspath();
-//            System.out.println(F_ADD);
             File f = new FileDev(F_ADD);
             f.mkdirs();
         }
@@ -71,8 +68,6 @@ public class emailControl {
         try {
             Session session = Session.getDefaultInstance(props, null);
             Store store = session.getStore("imaps");
-            //store.connect("imap.gmail.com", "tahirshakir606@gmail.com", "king786786");
-//            System.out.println(ESETTING.getHost() + " " + ESETTING.getEmail() + " " + ESETTING.getPass());
             store.connect(ESETTING.getHost(), ESETTING.getEmail(), ESETTING.getPass());
 
             Folder inbox = store.getFolder("Inbox");
@@ -88,13 +83,16 @@ public class emailControl {
             store.close();
 
         } catch (NoSuchProviderException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             help.displayNotification("Error", "Mail Connect Exception");
         } catch (MessagingException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             help.displayNotification("Error", "Mail Connect Exception");
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -136,10 +134,9 @@ public class emailControl {
             result = parseMultipart((MimeMultipart) message.getContent(), fromAddress);
         }
 
-        System.out.println(message.getSentDate());
         SimpleDateFormat dt = new SimpleDateFormat("yyyyy-MM-dd HH:mm:ss.S");
         try {
-            System.out.println(dt.format(message.getSentDate()));
+            System.out.println("Email Received Time: " + dt.format(message.getSentDate()));
         } catch (Exception e) {
             System.out.println(e); //Because some emails stop when reaching here
         }
@@ -160,14 +157,14 @@ public class emailControl {
         email.setSolvFlag('N');
         email.setLockd(0);
         email.setFreze(false);
-        System.out.println("Email:"+email);
+        System.out.println("x--x :" + email.getSubject());
+        System.out.println("Email Received From :" + fromAddress[0].toString());
         int tix = 1;    //2 means ticket 1 means general
 
         for (String t : white_list) {
             for (Address e : email.getFromAddress()) {
                 if (e.toString().contains(t)) {
                     tix = 2;
-                    System.out.println("Exists " + t);
                     break;
                 }
             }
@@ -214,14 +211,8 @@ public class emailControl {
             } else if (part.isMimeType("text/html")) {
                 String html = (String) part.getContent();
                 result = html;
-//                result = result + "\n" + org.jsoup.Jsoup.parse(html).text();
-//                System.out.println("After Parsing: " + result);
             } else if (part.isMimeType("multipart/*")) {
                 result = parseMultipart((MimeMultipart) part.getContent(), fromAddress);
-            } else {
-                System.out.println("Else Part");
-                System.out.println(part.getDisposition());
-                System.out.println(part.getContent().toString());
             }
         }
 
@@ -257,11 +248,10 @@ public class emailControl {
 
         InternetAddress ia = null;
         try {
-//            ia = new InternetAddress(ESETTING.getEmail());
-            System.out.println(ESETTING.getGenerated_reply_email());
             ia = new InternetAddress(ESETTING.getGenerated_reply_email());
         } catch (AddressException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         email.setFromAddress(new Address[]{ia});
@@ -271,7 +261,7 @@ public class emailControl {
             emailAddr = new InternetAddress(email.getFromAddress()[0].toString());
             emailAddr.validate();
         } catch (AddressException ex) {
-            System.out.println("Invalid Email ID");
+            System.out.println("Invalid Email ID : " + email.getFromAddress()[0].toString());
         }
 
         Session session = Session.getInstance(props,
@@ -310,8 +300,7 @@ public class emailControl {
 
             if (email == null)
                 return;
-//            String attach = email.getAttch();
-//lets check
+
             String attach = ""; //String to save in the database
             if (email.getAttachments() == null) {
             } else if (!(email.getAttachments().size() < 0)) {
@@ -323,8 +312,8 @@ public class emailControl {
                         attachment.setDataHandler(new DataHandler(source));
                         attachment.setFileName(f.getName());
                         attach = attach + f.getAbsolutePath() + "^";    //Concatenating String for Database
-                    }
-                    else {
+                    } else {
+                        System.out.println("File Not Found Of Attachment  : " + attach);
                         trayHelper.trayIcon.displayMessage("IOException", "File Not Found", TrayIcon.MessageType.ERROR);
                     }
                     multipart.addBodyPart(attachment);
@@ -344,6 +333,7 @@ public class emailControl {
                         attachment.setFileName(f.getName());
                         upDocSt = upDocSt + d.getName() + "^";    //Concatenating String for Database
                     } else {
+                        System.out.println("File Not Found  : " + upDocSt);
                         trayHelper.trayIcon.displayMessage("IOException", "File Not Found", TrayIcon.MessageType.ERROR);
                     }
                     multipart.addBodyPart(attachment);
@@ -360,6 +350,7 @@ public class emailControl {
             if (email.getToAddress() == null) { //Just to check if its null
             } else if (email.getToAddress().length > -1) {
                 Address[] toAdd = email.getToAddress();
+
                 for (int i = 0; i < toAdd.length; i++) {
                     if (toAdd[i] != null)
                         message.addRecipient(Message.RecipientType.TO, toAdd[i]);
@@ -393,7 +384,6 @@ public class emailControl {
                 try {
                     Transport.send(message);
                     System.out.println("Sent E-Mail to: " + email.getToAddress()[0].toString());
-//                    if (!email.isSent()) {
                     if (!message.getSubject().contains(EmailQueries.autoReplySubject)) {
                         email.setSent(true);
                         if (EmailDashController.Email_Type == 3) {
@@ -402,11 +392,11 @@ public class emailControl {
                             sqlConn.insertEmailSent(email); //insert email_Sent table
                         }
                     }
-//                    }
                 } catch (MessagingException ex) {
                     ex.printStackTrace();
                     trayHelper tray = new trayHelper();
                     tray.displayNotification("Error", "Messaging Exception: Email Not Sent");
+                    System.out.println("Email Not Sent To : " + email.getToAddress()[0].toString() + "\n" + email.getSubject());
                     email.setSent(false);
                     sqlConn.insertEmailSent(email); //insert email_Sent table
 
@@ -414,7 +404,8 @@ public class emailControl {
             }).start();
 
         } catch (MessagingException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
     }
@@ -436,17 +427,18 @@ public class emailControl {
             connection = (HttpURLConnection) u.openConnection();
             connection.setRequestMethod("HEAD");
             int code = connection.getResponseCode();
-//            System.out.println("" + code);
             return true;
             // You can determine on HTTP return code received. 200 is success.
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             return false;
         } catch (IOException e) {
             System.out.println("Unknown Host Exception");
             return false;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             return false;
         } finally {
             if (connection != null) {

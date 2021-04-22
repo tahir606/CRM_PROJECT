@@ -38,9 +38,11 @@ public class SettingsQueries {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return false;
@@ -63,7 +65,8 @@ public class SettingsQueries {
             statement.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -89,9 +92,11 @@ public class SettingsQueries {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return null;
@@ -124,7 +129,8 @@ public class SettingsQueries {
             statement.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         fHelper.DeleteESettings();
@@ -150,9 +156,11 @@ public class SettingsQueries {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            e.getLocalizedMessage();
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return null;
@@ -174,7 +182,8 @@ public class SettingsQueries {
 
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
     }
@@ -196,7 +205,8 @@ public class SettingsQueries {
             statement.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
     }
@@ -216,7 +226,8 @@ public class SettingsQueries {
             statement.setString(1, saveKeyword);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -227,14 +238,15 @@ public class SettingsQueries {
         try {
             // Connection con = getConnection();
             PreparedStatement statement = static_con.prepareStatement(query);
-//            System.out.println(query);
+
             ResultSet set = statement.executeQuery();
             while (set.next()) {
                 replacedKeyword = set.getString("REPLACEMENT_KEYWORD");
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
         return replacedKeyword;
     }
@@ -248,7 +260,8 @@ public class SettingsQueries {
             statement.setString(1, selectedItem);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 }

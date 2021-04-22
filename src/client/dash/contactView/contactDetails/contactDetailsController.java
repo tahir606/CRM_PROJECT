@@ -77,7 +77,8 @@ contactDetailsController implements Initializable {
                         FXMLLoader.load(
                                 getClass().getClassLoader().getResource("client/dash/contactView/contactView.fxml")));
             } catch (IOException e) {
-                e.printStackTrace();
+                e.getLocalizedMessage();
+//                e.printStackTrace();
             }
         });
         
@@ -112,7 +113,8 @@ contactDetailsController implements Initializable {
             Platform.setImplicitExit(true);
             stage2.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
     
@@ -138,7 +140,8 @@ contactDetailsController implements Initializable {
                                 getClass().getClassLoader().getResource("client/newContact/newContact.fxml")));
                 
             } catch (IOException e) {
-                e.printStackTrace();
+                e.getLocalizedMessage();
+//                e.printStackTrace();
             }
         });
 

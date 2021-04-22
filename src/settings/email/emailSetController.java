@@ -141,7 +141,8 @@ public class emailSetController implements Initializable {
             blacklist_keyword.getItems().addAll(blackListKeyword);
 
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         //Right click menu
@@ -204,7 +205,8 @@ public class emailSetController implements Initializable {
                             FXMLLoader.load(
                                     getClass().getClassLoader().getResource("settings/email/general.fxml")));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    e.getLocalizedMessage();
+//                    e.printStackTrace();
                 }
                 break;
             }
@@ -214,7 +216,8 @@ public class emailSetController implements Initializable {
                             FXMLLoader.load(
                                     getClass().getClassLoader().getResource("settings/email/tickets.fxml")));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    e.getLocalizedMessage();
+//                    e.printStackTrace();
                 }
                 break;
             }

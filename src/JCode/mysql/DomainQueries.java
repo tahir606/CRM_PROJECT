@@ -29,7 +29,8 @@ public class DomainQueries {
             if (statement != null)
                 statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             if (statement != null) {
                 try {
                     statement.close();
@@ -60,7 +61,8 @@ public class DomainQueries {
             if (statement != null)
                 statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             if (statement != null) {
                 try {
                     statement.close();
@@ -80,7 +82,8 @@ public class DomainQueries {
             statement.setString(2, domain);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } finally {
             // doRelease(con);
         }
@@ -104,7 +107,8 @@ public class DomainQueries {
             return l;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return null;
@@ -127,7 +131,8 @@ public class DomainQueries {
             return l;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return null;
@@ -152,7 +157,8 @@ public class DomainQueries {
             if (statement != null)
                 statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             if (statement != null) {
                 try {
                     statement.close();

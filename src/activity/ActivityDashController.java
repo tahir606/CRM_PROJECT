@@ -67,7 +67,8 @@ public class ActivityDashController implements Initializable {
                     try {
                         main_pane.setCenter(FXMLLoader.load(getClass().getResource(pane)));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                     img_loader.setVisible(false);
                 });

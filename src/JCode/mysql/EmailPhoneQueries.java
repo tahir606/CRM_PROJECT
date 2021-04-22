@@ -45,7 +45,8 @@ public class EmailPhoneQueries {
             if (statement != null)
                 statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -221,7 +222,8 @@ public class EmailPhoneQueries {
                 statement.close();
             // doRelease(con);
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
     }

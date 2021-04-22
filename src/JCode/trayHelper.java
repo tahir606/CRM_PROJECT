@@ -1,16 +1,12 @@
 package JCode;
 
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 public class trayHelper {
 
@@ -73,7 +69,8 @@ public class trayHelper {
                 try {
                     tray.add(trayIcon);
                 } catch (AWTException e) {
-                    e.printStackTrace();
+                    e.getLocalizedMessage();
+//                    e.printStackTrace();
                 }
             }
         }).start();

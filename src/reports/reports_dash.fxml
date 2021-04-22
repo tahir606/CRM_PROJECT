@@ -11,8 +11,10 @@
    <center>
       <AnchorPane fx:id="anchor_center" prefHeight="450.0" prefWidth="677.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox fx:id="hbox_filters" nodeOrientation="RIGHT_TO_LEFT" prefHeight="29.0" prefWidth="497.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0" />
-            <HBox fx:id="hbox_User" nodeOrientation="RIGHT_TO_LEFT" prefHeight="29.0" prefWidth="497.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="0.0" />
+            <HBox fx:id="hbox_filters" nodeOrientation="RIGHT_TO_LEFT" prefHeight="29.0" prefWidth="170.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0" />
+            <HBox fx:id="hBox_DatePicker" prefHeight="29.0" prefWidth="200.0" AnchorPane.rightAnchor="170.0" AnchorPane.topAnchor="0.0" />
+            <HBox fx:id="hbox_User" nodeOrientation="RIGHT_TO_LEFT" prefHeight="29.0" prefWidth="209.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="0.0">
+             </HBox>
             <Label fx:id="txt_reportName" layoutX="14.0" layoutY="6.0" text="Report Name">
                <font>
                   <Font name="Arial Narrow Bold" size="20.0" />
@@ -23,6 +25,7 @@
                   <Font name="Calibri Italic" size="14" />
                </font>
             </Label>
+
          </children>
       </AnchorPane>
    </center>

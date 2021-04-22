@@ -1,20 +1,11 @@
 package JCode;
 
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import objects.ESetting;
 import objects.Network;
 import objects.Users;
 
 import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class FileHelper {
 
@@ -69,12 +60,15 @@ public class FileHelper {
             String[] t = text.split("\\^");
             return new Network(t[0], Integer.parseInt(t[1]));
         } catch (FileNotFoundException e) {
+            System.out.println("Exception Network File Not Found : Line 63");
             System.out.println(e);
             return null;
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             return null;
         } finally {
             try {
@@ -154,7 +148,6 @@ public class FileHelper {
             }
 
             String[] t = text.split("\\^");
-
             String[] u = t[0].split("\\*");
 
             user.setUCODE(Integer.parseInt(u[0]));
@@ -166,7 +159,8 @@ public class FileHelper {
 
             return user;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             return null;
         } finally {
 //            try {
@@ -254,7 +248,8 @@ public class FileHelper {
 
             return Integer.parseInt(text);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             return 0;
         } finally {
 //            try {
@@ -303,7 +298,8 @@ public class FileHelper {
 
             return text;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             return null;
         } finally {
             try {
@@ -362,7 +358,8 @@ public class FileHelper {
             es.setDisctext(ReadAutoDisc(2).getDisctext());
             return es;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             return null;
         } finally {
             try {
@@ -452,7 +449,8 @@ public class FileHelper {
 
             return e;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             return null;
         } finally {
             try {
@@ -531,7 +529,8 @@ public class FileHelper {
 
             return ar;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             return new String[]{"null", "null", "null", "null"};
         } finally {
             try {
@@ -603,7 +602,8 @@ public class FileHelper {
 
             return ar;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             return new String[]{"0.5", "0.5", "0.5"};
         } finally {
             try {
@@ -668,7 +668,7 @@ public class FileHelper {
             return text;
         } catch (Exception e) {
             System.out.println(e);
-            System.out.println("Returning empty");
+            System.out.println("Dash Filter Returning Empty : ");
             writeDashFilters("");
             return "";
         } finally {

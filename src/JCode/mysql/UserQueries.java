@@ -40,6 +40,7 @@ public class UserQueries {
             ResultSet set = statement.executeQuery();
 
             while (set.next()) {
+
                 user.setUCODE(set.getInt(1));
                 user.setFNAME(set.getString(2));
                 user.setUright(set.getString(3));
@@ -61,7 +62,8 @@ public class UserQueries {
             return getRights(user);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return false;
@@ -92,7 +94,8 @@ public class UserQueries {
 //                // doRelease(con);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -130,7 +133,8 @@ public class UserQueries {
 
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } finally {
 //            // doRelease(con);
         }
@@ -158,7 +162,8 @@ public class UserQueries {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return "";
@@ -184,7 +189,8 @@ public class UserQueries {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return user;
@@ -242,12 +248,33 @@ public class UserQueries {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } finally {
 //            // doRelease(con);
         }
 
         return userList;
+    }
+
+    public String getUserRight(int code) {
+        String query = "SELECT  URIGHT FROM USERS WHERE UCODE = ? ";
+        PreparedStatement statement = null;
+        ResultSet set = null;
+        String userRight = null;
+        try {
+            statement = static_con.prepareStatement(query);
+            statement.setInt(1, code);
+            set = statement.executeQuery();
+            while (set.next()) {
+                userRight = set.getString("URIGHT");
+            }
+
+        } catch (SQLException e) {
+            e.getLocalizedMessage();
+//            e.printStackTrace();
+        }
+        return userRight;
     }
 
     public List<Users.uRights> getAllUserRights() {
@@ -274,7 +301,8 @@ public class UserQueries {
 
             return rightsList;
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } finally {
 //            // doRelease(con);
         }

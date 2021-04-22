@@ -14,7 +14,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -88,7 +87,8 @@ public class dashBaseController implements Initializable {
                                     getClass().getClassLoader().getResource("client/dash/contactView/contactView.fxml")));
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    e.getLocalizedMessage();
+//                    e.printStackTrace();
                 }
                 break;
             }
@@ -99,7 +99,8 @@ public class dashBaseController implements Initializable {
                             FXMLLoader.load(
                                     getClass().getClassLoader().getResource("client/dash/clientView/clientView.fxml")));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    e.getLocalizedMessage();
+//                    e.printStackTrace();
                 }
                 break;
             }
@@ -144,7 +145,8 @@ public class dashBaseController implements Initializable {
                     try {
                         main_pane.setCenter(FXMLLoader.load(getClass().getResource(pane)));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
 //                        pane_client.getChildren().add(admin_pane);
                     currentPane = p;

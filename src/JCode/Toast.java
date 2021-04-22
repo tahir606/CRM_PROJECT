@@ -48,7 +48,8 @@ public final class Toast {
                     Thread.sleep(toastDelay);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    e.getLocalizedMessage();
+//                    e.printStackTrace();
                 }
                 Timeline fadeOutTimeline = new Timeline();
                 KeyFrame fadeOutKey1 = new KeyFrame(Duration.millis(fadeOutDelay), new KeyValue(toastStage.getScene().getRoot().opacityProperty(), 0));
@@ -95,7 +96,8 @@ public final class Toast {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    e.getLocalizedMessage();
+//                    e.printStackTrace();
                 }
                 Timeline fadeOutTimeline = new Timeline();
                 KeyFrame fadeOutKey1 = new KeyFrame(Duration.millis(500), new KeyValue(toastStage.getScene().getRoot()

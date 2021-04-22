@@ -53,11 +53,13 @@ public class SolvedDialogController implements Initializable {
         });
 
         btn_solved.setOnAction(event -> {
-            sqlConn.solvEmail(selectedEmail, "S", user, !check_send.isSelected(), txt_body.getText().toString()); // S for solved
+            if (selectedEmail.getIsResolve() == selectedEmail.getLockd()  && isAdmin.equals("Admin") && selectedEmail.getIsAllocatedBy() == user.getUCODE()) {
+                sqlConn.solvEmail(selectedEmail, "S", selectedEmail.getLockd(), !check_send.isSelected(), txt_body.getText().toString()); // S for solved
+            } else if (selectedEmail.getLockd() == user.getUCODE()){
+                sqlConn.solvEmail(selectedEmail, "S", user.getUCODE(), !check_send.isSelected(), txt_body.getText().toString()); // S for solved
+            }
             loadEmailsStatic();
             reloadInstances();
-//            list_emailsF.getSelectionModel().select(EmailDashController.index++);
-//            System.out.println("Selecting index: " + EmailDashController.index++);
             Stage stage = (Stage) btn_solved.getScene().getWindow();
             stage.close();
         });

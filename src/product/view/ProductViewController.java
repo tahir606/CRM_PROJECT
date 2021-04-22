@@ -67,7 +67,8 @@ public class ProductViewController implements Initializable {
                                         getClass().getClassLoader().getResource
                                                 ("product/details/product_details.fxml")));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                 }
             });

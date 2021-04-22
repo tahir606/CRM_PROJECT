@@ -67,7 +67,25 @@ public class ClientQueries {
         }
 
     }
+    public List<ClientProperty> clientName(){
+        List<ClientProperty> clientPropertyList = new ArrayList<>();
+        String query = "Select Cl_ID,Cl_NAME From client_store Where Cl_ID!=0";
+        try {
+            PreparedStatement statement = static_con.prepareStatement(query);
+            ResultSet set = statement.executeQuery();
+            while (set.next()){
+                ClientProperty clientProperty = new ClientProperty();
+                clientProperty.setCode(set.getInt("Cl_ID"));
+                clientProperty.setName(set.getString("Cl_NAME"));
+                clientPropertyList.add(clientProperty);
+            }
 
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return clientPropertyList;
+    }
     public void updateClient(ClientProperty client) {
 
         String query = "UPDATE  client_store  SET  CL_NAME = ?, CL_OWNER = ?," +
@@ -76,8 +94,6 @@ public class ClientQueries {
 
         // Connection con = getConnection();
         PreparedStatement statement = null;
-
-        System.out.println("Client Owner: " + client.getOwner());
 
         try {
             statement = static_con.prepareStatement(query);
@@ -141,8 +157,6 @@ public class ClientQueries {
         List<ClientProperty> allClients = new ArrayList<>();
 
         try {
-            // Connection con = getConnection();
-//            System.out.println(query);
             PreparedStatement statement = static_con.prepareStatement(query);
             ResultSet set = statement.executeQuery();
             //-------------Creating Email-------------
@@ -225,7 +239,7 @@ public class ClientQueries {
 
         try {
             // Connection con = getConnection();
-//            System.out.println(query);
+
             PreparedStatement statement = static_con.prepareStatement(query);
             ResultSet set = statement.executeQuery();
             //-------------Creating Email-------------
@@ -299,7 +313,7 @@ public class ClientQueries {
 
         try {
             // Connection con = getConnection();
-//            System.out.println(query);
+
             PreparedStatement statement = static_con.prepareStatement(query);
             statement.setInt(1, where.getCode());
             ResultSet set = statement.executeQuery();

@@ -55,7 +55,8 @@ public class ContactQueries {
             emailPhoneQueries.emailsPhoneInsertion(statement, contact);
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
         
     }
@@ -89,7 +90,8 @@ public class ContactQueries {
             emailPhoneQueries.emailsPhoneInsertion(statement, contact);
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
         
     }
@@ -108,8 +110,6 @@ public class ContactQueries {
         } else {
             query = query + " AND " + where;
         }
-
-        System.out.println(query);
 
         List<ContactProperty> allContacts = new ArrayList<>();
         
@@ -133,8 +133,7 @@ public class ContactQueries {
                 contact.setAge(CommonTasks.getAge(contact.getDob()));
                 contact.setNote(set.getString("CS_NOTE"));
                 contact.setIsFreeze(set.getBoolean("FREZE"));
-                System.out.println(contact);
-                contact.setContactNotes(noteQueries.getNotes(contact));
+               contact.setContactNotes(noteQueries.getNotes(contact));
                 allContacts.add(contact);
             }
             
@@ -161,7 +160,8 @@ public class ContactQueries {
             }
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
         
         return 0;

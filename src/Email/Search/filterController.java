@@ -55,9 +55,6 @@ public class filterController implements Initializable {
         Insets inset = new Insets(5, 2, 5, 1);
 
         combo_filter.valueProperty().addListener((observable, oldValue, newValue) -> {
-
-            System.out.println(newValue);
-
             switch (newValue) {
                 case "Email Type": {
                     if (email == true) {
@@ -68,7 +65,7 @@ public class filterController implements Initializable {
                     emailType.setSpacing(10);
 
                     JFXComboBox<String> types = new JFXComboBox<>();
-                    types.getItems().addAll("All", "My Emails", "Solved", "UnSolved", "Locked", "Unlocked", "Archived");
+                    types.getItems().addAll("All", "My Emails", "Solved", "UnSolved", "Locked", "Unlocked", "Archived","AllocatedEmail");
                     types.setMinWidth(219);
                     types.setPromptText("Set Email Type");
                     types.setAccessibleText("emailType");
@@ -224,11 +221,7 @@ public class filterController implements Initializable {
                 default:
                     break;
             }
-//            try {
-//                combo_filter.getSelectionModel().select(0);
-//            } catch (NullPointerException e) {
-//                System.out.println("BS");
-//            }
+
         });
     }
 
@@ -300,6 +293,11 @@ public class filterController implements Initializable {
                                         emailClause = " FREZE = 1 ";
                                         break;
                                     }
+                                    case "AllocatedEmail": {
+                                        emailClause = " isAllocatedFrom = 1 ";
+                                        break;
+                                    }
+
                                 }
                             } else {
                                 emailClause = " 1 ";

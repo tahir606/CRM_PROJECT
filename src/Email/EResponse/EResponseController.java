@@ -117,8 +117,6 @@ public class EResponseController implements Initializable {
 
         } else if (stInstance == 'F') {
             if (stAttach == null) {
-
-//                txt_attach.setVisible(false);
             } else {
                 fileList = addFile(stAttach);
                 String at = "";
@@ -127,13 +125,6 @@ public class EResponseController implements Initializable {
                         at = at + " -- " + f.getName();
                     }
                 }
-//                if (fileList != null) {
-//                    for (File f : fileList) {
-//                        at = at + " -- " + f.getName();
-//                    }
-//                }
-//                return at;
-//                txt_attach.setText(addFile());
                 txt_attach.setText(at);
                 txt_attach.setVisible(true);
             }
@@ -148,14 +139,11 @@ public class EResponseController implements Initializable {
             btn_Send.setText("Forward");
         } else if (stInstance == 'N') {
             populateTo();
-        } else {
-
         }
     }
 
     public static List<File> addFile(String attach) {
         List<File> newFileList = new ArrayList<>();
-
         for (String c : attach.split("\\^")) {
             FileDev file = new FileDev(c);
             newFileList.add(file);
@@ -180,6 +168,7 @@ public class EResponseController implements Initializable {
         String cc[] = stCc.split(",");
         for (String c : cc) {
             txt_cc.setText(c + ",");
+
         }
     }
 
@@ -189,16 +178,16 @@ public class EResponseController implements Initializable {
                 return;
             if (newValue.contains(",")) {
 //                if (validateAddress(newValue)) {
-                    HBox hb = new HBox();
-                    Label l = new Label(newValue.split("\\,")[0]);
-                    l.setMaxWidth(120);
-                    l.setAccessibleText("txt");
-                    JFXButton b = new JFXButton("x");
-                    b.setStyle("-fx-font-size: 5pt");
-                    b.setOnAction(event -> box.getChildren().remove(hb));
-                    hb.getChildren().addAll(l, b);
-                    box.getChildren().add(hb);
-                    txt_field.setText("");
+                HBox hb = new HBox();
+                Label l = new Label(newValue.split("\\,")[0]);
+                l.setMaxWidth(120);
+                l.setAccessibleText("txt");
+                JFXButton b = new JFXButton("x");
+                b.setStyle("-fx-font-size: 5pt");
+                b.setOnAction(event -> box.getChildren().remove(hb));
+                hb.getChildren().addAll(l, b);
+                box.getChildren().add(hb);
+                txt_field.setText("");
 //                } else {
 //                    newValue=newValue.replaceAll(",",""); // replace comma for correcting valid email
 //                    Alert alert = new Alert(Alert.AlertType.WARNING, "Email Entered is Invalid",
@@ -242,15 +231,14 @@ public class EResponseController implements Initializable {
             for (Node node : b.getChildren()) {
                 if (node.getAccessibleText() == null)
                     continue;
-//                System.out.println(node.getAccessibleText());
                 if (node.getAccessibleText().equals("txt")) {
                     Label l = (Label) node;
                     try {
-//                        System.out.println(l.getText());
                         Address to = new InternetAddress(l.getText());
                         to_emails.add(to);
                     } catch (AddressException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                 }
             }
@@ -261,13 +249,14 @@ public class EResponseController implements Initializable {
                 to_emails.add(to);
             }
         } catch (AddressException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         Address ad[] = to_emails.toArray(new Address[to_emails.size()]);
         em.setToAddress(ad);
 
-        if(em.getToAddressString().isEmpty()){ // check txtField is empty or Not
+        if (em.getToAddressString().isEmpty()) { // check txtField is empty or Not
             Alert alert = new Alert(Alert.AlertType.WARNING, "Required To Address is Empty",
                     ButtonType.OK);
             alert.showAndWait();
@@ -309,7 +298,6 @@ public class EResponseController implements Initializable {
         }
         Address cc[] = cc_emails.toArray(new Address[cc_emails.size()]);
         em.setCcAddress(cc);
-
 //        if (validateAddress(txt_cc.getText()) || txt_cc.getText().equals("")) { // check email pattern
 //        } else {
 //            Alert alert = new Alert(Alert.AlertType.WARNING, "Required CC Address is Invalid",
@@ -354,6 +342,8 @@ public class EResponseController implements Initializable {
 //
 //            return;
 //        }
+
+
         em.setSubject(Subject);
         //Replace Line Breaks with <br> tags
         Body = Body.replace("\n", "<br>");
@@ -412,8 +402,6 @@ public class EResponseController implements Initializable {
                 //Replace Line Breaks with <br> tags
                 Body = Body.replace("\n", "<br>");
                 em.setBody(Body);
-//                int var=sql.generateTicket();
-//                System.out.println("check ticket No" + ticketNo);
                 helper.sendEmail(em, null);
             }
 

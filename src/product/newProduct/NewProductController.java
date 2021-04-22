@@ -8,7 +8,6 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -78,7 +77,9 @@ public class NewProductController implements Initializable {
                                 getClass().getClassLoader().getResource("product/view/product_view.fxml")));
                 
             } catch (IOException e) {
-                e.printStackTrace();
+
+                e.getLocalizedMessage();
+//                e.printStackTrace();
             }
         });
         

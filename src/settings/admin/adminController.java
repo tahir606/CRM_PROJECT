@@ -94,7 +94,6 @@ public class adminController implements Initializable {
 
         usersList = sql.getAllUsers();
         rightsList = sql.getAllUserRights();
-
         nUcode = usersList.get(usersList.size() - 1).getUCODE() + 1;    //Get Ucode for new User
         UcodeisEmail = getIsEmail((ArrayList<Users>) usersList);        //Check if this user is receiving email
 
@@ -117,7 +116,6 @@ public class adminController implements Initializable {
     }
 
     private void populateDetails(Users newValue) {
-
         boolean isLoggedIn = sql.checkIfUserIsLoggedIn(newValue);
         if (isLoggedIn) {
             label_message.setVisible(true);
@@ -233,6 +231,7 @@ public class adminController implements Initializable {
                 }
                 continue;
             }
+
             if (jf.isSelected())
                 rights.add(new Users.uRights(index, ""));
         }
@@ -271,8 +270,8 @@ public class adminController implements Initializable {
 
     public void deleteUser(ActionEvent actionEvent) {
 
-        System.out.println(userSel.getUCODE());
-        System.out.println(nUcode);
+        System.out.println("DELETE User : "+userSel.getUCODE());
+
         if (userSel.getUCODE() == nUcode) {
             return;
         }

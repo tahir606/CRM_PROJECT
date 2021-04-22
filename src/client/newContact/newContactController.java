@@ -80,7 +80,8 @@ public class newContactController implements Initializable {
                                 getClass().getClassLoader().getResource("client/dash/contactView/contactView.fxml")));
                 
             } catch (IOException e) {
-                e.printStackTrace();
+                e.getLocalizedMessage();
+//                e.printStackTrace();
             }
         });
         
@@ -201,7 +202,7 @@ public class newContactController implements Initializable {
                 if (c != null)
                     contact.setClID(c.getCode());
                 
-                System.out.println(contact);
+
                 
                 switch (stInstance) {
                     case 'N': {

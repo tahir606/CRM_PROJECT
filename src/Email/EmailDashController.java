@@ -33,7 +33,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -62,27 +61,25 @@ public class EmailDashController implements Initializable {
     @FXML
     private AnchorPane anchor_body, anchor_details, anchor_remarks;
     @FXML
-    private Label label_ticket, label_time, label_locked, label_created, title_created, label_from, title_locked, label_related_emails, label_count;
+    private Label label_ticket, label_time, label_locked, label_created, title_created, label_from, title_locked, label_count, tittle_solveTime, label_solveTime;
     @FXML
     private TextArea txt_subject;
     @FXML
-    private JFXButton btn_lock, btn_solv, btn_unlock;
+    private JFXButton btn_lock, btn_solv, btn_unlock, btn_resolve;
     @FXML
     private JFXComboBox<String> combo_respond;
     @FXML
-    private BorderPane border_email;
-    @FXML
-    private VBox category_box, vbox_from, vbox_cc, vbox_contacts, vbox_clients, vbox_details, vbox_filter, vbox_Remarks;
-    @FXML
-    private HBox hbox_from, hbox_cc, hbox_clients, hbox_contacts;
+    private VBox category_box, vbox_from, vbox_cc, vbox_filter;
     @FXML
     private JFXComboBox<FileDev> combo_attach;
+    @FXML
+    private JFXComboBox<Users> selectUser;
     @FXML
     private MenuBar menu_bar;
     @FXML
     private JFXTextField search_txt;
     @FXML
-    private ListView<Email> list_emails, relatedEmails;
+    private ListView<Email> list_emails;
 
     private mySqlConn sql;
     private FileHelper fHelper;
@@ -105,6 +102,8 @@ public class EmailDashController implements Initializable {
     public EmailDashController() {
     }
 
+    public static String isAdmin;
+    List<Users> usersList = new ArrayList<>();
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         imgLoader.setVisible(true);
@@ -115,6 +114,7 @@ public class EmailDashController implements Initializable {
         fHelper = new FileHelper();
 
         user = fHelper.ReadUserDetails();
+        isAdmin = sql.getUserRight(user.getUCODE());
 
         //Setting icons notifier for unread emails
         ticketNumberLatest = fHelper.ReadLastEmailNumber(1);
@@ -142,13 +142,9 @@ public class EmailDashController implements Initializable {
         populateMenuBar();
         populateFilters();
 
-//        TabPane tabPane = new TabPane();
         tabPane.setMinWidth(100);
         tabPane.setMinHeight(100);
 
-//        Populating List
-//        Creates the changes in the Details Section
-//        list_emails.getSelectionModel().clearSelection();
         list_emails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 
             selectedEmail = newValue;
@@ -180,7 +176,6 @@ public class EmailDashController implements Initializable {
 
             EResponseController.stTo = sEmail.getFromAddressCommaString();
             EResponseController.stCc = sEmail.getCcAddressCommaString();
-
             if (newValue.equals("Reply")) {
                 EResponseController.stInstance = 'R';
                 EResponseController.stSubject = "RE: " + sEmail.getSubject();
@@ -203,12 +198,23 @@ public class EmailDashController implements Initializable {
             combo_respond.getSelectionModel().select(0);
         });
 
-//        relatedEmails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-//            populateDetails(newValue);
-//            selectedEmail = null;
-//            list_emails.getSelectionModel().select(null);
-//            enableDisable(4);
-//        });
+
+        List<Users> usersList2 = sql.getAllUsers();
+        for (Users c : usersList2) {
+            usersList.add(c);
+        }
+        selectUser.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (isAdmin.equals("Admin")) {
+                if (newValue == null) {
+                    return;
+                } else {
+                    if (sql.updateLockEmail(newValue, selectedEmail, 1)) {
+                        loadEmailsStatic();
+                        reloadInstances();
+                    }
+                }
+            }
+        });
 
     }
 
@@ -319,6 +325,7 @@ public class EmailDashController implements Initializable {
             }
         });
 
+
         //Right click menu
         ContextMenu contextMenu = new ContextMenu();
         MenuItem archiveItem = new MenuItem("Move to Archive");
@@ -337,13 +344,13 @@ public class EmailDashController implements Initializable {
             }
         });
         contextMenu.getItems().add(archiveItem);
+
+
         if (Email_Type == 2) {
             MenuItem createTicket = new MenuItem("Create Ticket");
             createTicket.setOnAction(t -> {
                 Email selectedItem = list_emails.getSelectionModel().getSelectedItem();
                 selectedItem.setManual(user.getUCODE());
-//                System.out.println(selectedItem);
-                sql.insertEmailManual(selectedItem);
                 sql.insertEmailManual(selectedItem);
                 sql.ArchiveEmail(Email_Type, " EMNO = " + selectedItem.getEmailNo());
                 loadEmails();
@@ -356,12 +363,7 @@ public class EmailDashController implements Initializable {
             sendAgain.setOnAction(t -> {
                 Email selectedItem = list_emails.getSelectionModel().getSelectedItem();
                 emailControl.sendEmail(selectedItem, null);
-                System.out.println("send again");
                 loadEmails();
-//                sql.getResendEmail(selectedItem,selectedItem.getEmailNo());
-//                emailControl.sendEmail(resendEmail,null);
-
-
             });
             contextMenu.getItems().add(sendAgain);
         }
@@ -390,8 +392,6 @@ public class EmailDashController implements Initializable {
                 break;
         }
 
-//        System.out.println(emails);
-
         if (emails == null) {
             emails = new ArrayList<>();
             Email nEm = new Email();
@@ -400,13 +400,11 @@ public class EmailDashController implements Initializable {
             nEm.setFromAddress(new Address[]{new InternetAddress()});
             nEm.setAttch("");
             emails.add(nEm);
-
             list_emails.setDisable(true);
             enableDisable(1);
         } else {
             list_emails.setDisable(false);
         }
-
         return emails;
     }
 
@@ -451,7 +449,8 @@ public class EmailDashController implements Initializable {
             stage2.sizeToScene();
             stage2.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -471,6 +470,7 @@ public class EmailDashController implements Initializable {
         //making list filterable
         ObservableList<Email> dataObj = FXCollections.observableArrayList(checkIfEmailsExist());
         FilteredList<Email> filteredList = new FilteredList<>(dataObj, s -> true);
+
         search_txt.textProperty().addListener((observable, oldValue, newValue) -> setSearch(filteredList));
 
         setSearch(filteredList);
@@ -519,6 +519,7 @@ public class EmailDashController implements Initializable {
     }
 
     public void onLock(ActionEvent actionEvent) {
+
         imgLoader.setVisible(true);
         sql.lockEmail(selectedEmail, 1);
         loadEmailsStatic();
@@ -534,15 +535,18 @@ public class EmailDashController implements Initializable {
 
         eSetting = sql.getEmailSettings();
         solvIndex = list_emails.getSelectionModel().getSelectedIndex();
-//        System.out.println("Selected Index: " + solvIndex);
         if (!eSetting.isSolv()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to mark this as solved?\n" +
                     "This action cannot be taken back. No response will be issued.",
                     ButtonType.YES, ButtonType.NO);
             alert.showAndWait();
-
             if (alert.getResult() == ButtonType.YES) {
-                sql.solvEmail(selectedEmail, "S", user, false, ""); // S for solved
+                if (selectedEmail.getIsResolve() == selectedEmail.getLockd() && isAdmin.equals("Admin") && selectedEmail.getIsAllocatedBy() == user.getUCODE()) {
+                    sql.solvEmail(selectedEmail, "S", selectedEmail.getLockd(), false, ""); // S for solved
+                } else if (selectedEmail.getLockd() == user.getUCODE()) {
+                    sql.solvEmail(selectedEmail, "S", user.getUCODE(), false, ""); // S for solved
+                }
+
                 loadEmailsStatic();
                 reloadInstances();
             } else {
@@ -555,8 +559,15 @@ public class EmailDashController implements Initializable {
 
     public void onUnlock(ActionEvent actionEvent) {
         imgLoader.setVisible(true);
+
         Email email = selectedEmail;
-        sql.lockEmail(email, 0);
+//        if (isAdmin.equals("Admin") && email.getIsAllocatedTo() == 1) {
+        if (email.getIsAllocatedBy() == user.getUCODE()) {
+            sql.updateLockEmail(null, email, 0);
+        } else if (user.getUCODE() == email.getLockd()) {
+            sql.lockEmail(email, 0);
+        }
+
         loadEmailsStatic();
         reloadInstances();
     }
@@ -598,10 +609,7 @@ public class EmailDashController implements Initializable {
     }
 
     Address[] from, cc;
-    List<ContactProperty> relatedContacts = new ArrayList<>();
-    List<ClientProperty> relatedClients = new ArrayList<>();
 
-    //    private void populateDetails(Email email) {
     public void populateDetails(Email email) {
         imgLoader.setVisible(true);
         new Thread(() -> Platform.runLater(() -> {
@@ -617,16 +625,27 @@ public class EmailDashController implements Initializable {
             vbox_from.setSpacing(2.0);
             vbox_cc.getChildren().clear();    //Both VBoxes
             vbox_cc.setSpacing(2.0);
-//            vbox_contacts.getChildren().clear();
-//            vbox_contacts.setSpacing(2.0);
-//            vbox_clients.getChildren().clear();
-//            vbox_clients.setSpacing(2.0);
 
             label_from.setText("From:");
             if (Email_Type == 1) {
+                selectUser.getItems().clear();
+                if (email.getIsAllocatedBy() == 0) {
+                    selectUser.setPromptText("Lock");
+                } else {
+                    selectUser.setPromptText("Allocated");
+                }
+                selectUser.setDisable(false);
+
+                selectUser.getItems().addAll(usersList);
+
                 from = email.getFromAddress();
                 title_locked.setText("Locked By: ");
-                label_locked.setText(email.getLockedByName());
+                if (email.getIsAllocatedBy() == 0) {
+                    label_locked.setText(email.getLockedByName());
+                } else {
+                    label_locked.setText(email.getLockedByName() + " ( " + email.getIsAllocatedByName() + " )");
+                }
+
 
                 if (email.getManual() != '\0') {
                     label_created.setVisible(true);
@@ -638,14 +657,17 @@ public class EmailDashController implements Initializable {
                 }
 
             } else if (Email_Type == 2) {
+                tittle_solveTime.setText("");
+                label_solveTime.setText("");
                 from = email.getFromAddress();
             } else if (Email_Type == 4 || Email_Type == 3) {
+                tittle_solveTime.setText("");
+                label_solveTime.setText("");
                 label_from.setText("To:");
                 from = email.getToAddress();
                 title_locked.setText("Sent By User: ");
                 label_locked.setText(email.getUser());
             }
-
             cc = email.getCcAddress();
             if (from != null) {
                 for (Address f : from) {
@@ -673,52 +695,12 @@ public class EmailDashController implements Initializable {
             }
 
             txt_subject.setText(email.getSubject());
-//
-//            if (Email_Type == 1) {                              //Check for email relations only if ticket is selected
-//                relatedContacts = email.getRelatedContacts();
-//                if (relatedContacts == null) {
-//                } else {
-//                    if (relatedContacts.size() > 0) {
-//                        hbox_contacts.setVisible(true);
-//                        for (ContactProperty c : relatedContacts) {
-//                            try {
-//                                Label label = new Label(c.toString());
-//                                label.setPadding(new Insets(2, 5, 2, 5));
-//                                label.getStyleClass().add("moduleDetails");
-//                                vbox_contacts.getChildren().add(label);
-//                            } catch (NullPointerException ex) {
-//                                //Because null is saved
-//                            }
-//                        }
-//                    } else
-//                        hbox_contacts.setVisible(false);
-//                }
-
-//                relatedClients = email.getRelatedClients();
-//                if (relatedContacts == null) {
-//                } else {
-//                    if (relatedClients.size() > 0) {
-//                        hbox_clients.setVisible(true);
-//                        for (ClientProperty c : relatedClients) {
-//                            try {
-//                                Label label = new Label(c.toString());
-//                                label.setPadding(new Insets(2, 5, 2, 5));
-//                                label.getStyleClass().add("moduleDetails");
-//                                vbox_clients.getChildren().add(label);
-//                            } catch (NullPointerException ex) {
-//                                //Because null is saved
-//                            }
-//                        }
-//                    } else
-//                        hbox_clients.setVisible(false);
-//                }
-//            }
-//            else {
-//                hbox_contacts.setVisible(false);
-//                hbox_clients.setVisible(false);
-//            }
 
             anchor_details.setVisible(true);
+
+            if (isAdmin.equals("Admin")) {
+                selectUser.setVisible(true);
+            }
 
             //----Attachments
             combo_attach.getItems().clear();
@@ -745,7 +727,7 @@ public class EmailDashController implements Initializable {
 
             eBody.getEngine().loadContent(email.getBody());
 
-//            System.out.println("NOT SETTING UP FONT");
+
             eBody.getEngine().setUserStyleSheetLocation("data:,body { font: 15px Calibri; }");
 //            eBody.setWrapText(true);
             eBody.setPrefSize(anchor_body.getWidth(), anchor_body.getHeight());
@@ -763,13 +745,13 @@ public class EmailDashController implements Initializable {
                 btn_lock.setVisible(false);
                 btn_unlock.setVisible(false);
                 btn_solv.setVisible(false);
-
                 imgLoader.setVisible(false);
                 return;
             } else {
                 btn_lock.setVisible(true);
                 btn_unlock.setVisible(true);
                 btn_solv.setVisible(true);
+
             }
 
             //Locked/Solved Label
@@ -779,31 +761,48 @@ public class EmailDashController implements Initializable {
                 if (email.getLockTime() != null)
                     display = display + " ( " + CommonTasks.getDateDiff(email.getLockTime(), email.getSolveTime(), TimeUnit.MINUTES) + " ) ";
                 label_locked.setText(display);
+                label_solveTime.setText(email.getSolveTime());
                 enableDisable(2);
+            } else if (email.getIsAllocatedBy() != 0) {
+                if (email.getIsResolve() == 0 && isAdmin.equals("Admin") && email.getIsAllocatedBy() == user.getUCODE()) { //email is allocated but not resolve it can be unlocked by same admin
+                    label_solveTime.setText(email.getAllocateTime());
+                    enableDisable(10);
+                } else if (email.getIsResolve() != 0 && isAdmin.equals("Admin") && email.getIsAllocatedBy() == user.getUCODE()) {  //  email is allocated and resolved admin can solve
+                    label_solveTime.setText(email.getResolveTime());
+                    enableDisable(8);
+                } else if (email.getIsResolve() != 0) { // email is allocated and resolve by user resolved disable and other button is invisible
+                    label_solveTime.setText(email.getResolveTime());
+                    enableDisable(7);
+                } else if (email.getLockd() == user.getUCODE()) {  // email is allocated and user is same and the resolve button is visible
+                    label_solveTime.setText(email.getAllocateTime());
+                    enableDisable(6);
+                } else if (email.getLockd() != user.getUCODE()) {  // email is allocated and user is same and the resolve button is visible
+                    tittle_solveTime.setText("Allocate Time: ");
+                    label_solveTime.setText(email.getAllocateTime());
+                    enableDisable(4);
+                } else {
+                    tittle_solveTime.setText("Locked Time: ");
+                    enableDisable(4); // email is allocated
+                }
             } else {    //If Email is not solved
                 if (email.getLockd() != '\0') {     //If Email is locked
                     if (email.getLockd() == user.getUCODE()) {      //If Email is locked by YOU
+                        label_solveTime.setText(email.getLockTime());
                         enableDisable(3);
-                    } else {                        //If Email is locked but NOT by you
+                    } else {
+                        tittle_solveTime.setText("Locked Time: ");
+                        label_solveTime.setText(email.getLockTime());
                         enableDisable(4);
                     }
-                } else {                            //If Email is not locked
-                    enableDisable(5);
+                } else {//If Email is not locked
+                    if (isAdmin.equals("Admin")) { // email is locked by admin
+                        enableDisable(9);
+                    } else {
+                        enableDisable(5); // email is locked by user
+                    }
                 }
             }
-//
-//            //Related Emails
-//            relatedEmails.getItems().clear();
-//            if (email.getRelatedEmails().size() > 0) {
-//                ObservableList<Email> dataObj = FXCollections.observableArrayList(email.getRelatedEmails());
-//                relatedEmails.setItems(dataObj);
-//
-//                relatedEmails.setVisible(true);
-//                label_related_emails.setVisible(true);
-//            } else {
-//                label_related_emails.setVisible(false);
-//                relatedEmails.setVisible(false);
-//            }
+
             imgLoader.setVisible(false);
         })).start();
     }
@@ -821,7 +820,7 @@ public class EmailDashController implements Initializable {
     }
 
     private JFXComboBox sortBy, ascDesc;
-    private JFXCheckBox solved, unSolved, locked, unLocked, lockedByMe, hideReminders, archived;
+    private JFXCheckBox solved, unSolved, locked, unLocked, lockedByMe, hideReminders, archived, allocatedEmail;
 
     private int filterChoice = 0; //1 == tickets 2 == general
 
@@ -879,6 +878,13 @@ public class EmailDashController implements Initializable {
         setUpCheck(archived);
         archived.selectedProperty().addListener((observable, oldValue, newValue) -> saveFilters());
         archived.setSelected(filter.isArchived());
+
+        allocatedEmail = new JFXCheckBox("Pending Emails");
+        setUpCheck(allocatedEmail);
+        allocatedEmail.selectedProperty().addListener((observable, oldValue, newValue) -> saveFilters());
+        allocatedEmail.setSelected(filter.isAllocate());
+
+
     }
 
     private void populateMenuBar() {
@@ -947,11 +953,15 @@ public class EmailDashController implements Initializable {
             filter.setLockedByMe(lockedByMe.isSelected());
             filter.setHideReminders(hideReminders.isSelected());
             filter.setArchived(archived.isSelected());
+
+            filter.setAllocate(allocatedEmail.isSelected());
+
+
             filter.writeToFile();
 
             loadEmailsStatic();
         } catch (NullPointerException e) {
-            System.out.println("x--x");
+            System.out.println("Save Filters x--x : Line 959 ");
         }
     }
 
@@ -989,35 +999,112 @@ public class EmailDashController implements Initializable {
             imgLoader.setVisible(false);
         } else if (i == 2) {    //If email is solved
             title_locked.setText("Solved By: ");
-
+            tittle_solveTime.setText("Solved Time: ");
             btn_lock.setDisable(true);
             btn_lock.setVisible(true);
             btn_unlock.setDisable(true);
             btn_unlock.setVisible(false);
             btn_solv.setDisable(true);
-
+            btn_resolve.setVisible(false);
+            selectUser.setVisible(false);
             combo_respond.setDisable(true);
         } else if (i == 3) {    //If email is locked by you
+            tittle_solveTime.setText("Locked Time: ");
             btn_lock.setVisible(false);
             btn_unlock.setVisible(true);
             btn_unlock.setDisable(false);
             btn_solv.setDisable(false);     //Only someone who has locked the email can solve it.
-
+            btn_resolve.setVisible(false); // new
+            selectUser.setDisable(true);
             combo_respond.setDisable(false);
         } else if (i == 4) {    //If email is locked but not by you
+
             btn_unlock.setVisible(false);
             btn_lock.setVisible(true);
             btn_lock.setDisable(true);
             btn_solv.setDisable(true);
-
+            btn_resolve.setVisible(false);
+            selectUser.setVisible(false); // new
             combo_respond.setDisable(true);
         } else if (i == 5) {    //If email is not locked
+            label_solveTime.setText("");
+            tittle_solveTime.setText("");
             btn_lock.setDisable(false);
             btn_lock.setVisible(true);
             btn_unlock.setVisible(false);
             btn_solv.setDisable(true);
-
+            btn_resolve.setVisible(false); // new
             combo_respond.setDisable(true);
+        } else if (i == 6) {    //Resolve button display for same user
+            tittle_solveTime.setText("Allocate Time: ");
+            btn_lock.setDisable(false);
+            btn_lock.setVisible(false);
+            btn_unlock.setVisible(false);
+            btn_solv.setVisible(false);
+            btn_solv.setDisable(true);
+            selectUser.setVisible(false);
+            btn_resolve.setVisible(true);
+            btn_resolve.setDisable(false);
+            combo_respond.setDisable(true);
+        } else if (i == 7) {    // email is resolved the user end expect admin the resolved button is disable
+            tittle_solveTime.setText("Resolved Time: ");
+            btn_lock.setDisable(false);
+            btn_lock.setVisible(false);
+            btn_unlock.setVisible(false);
+            btn_solv.setDisable(false);
+            btn_solv.setVisible(false);
+            selectUser.setVisible(false);
+            btn_resolve.setVisible(true);
+            btn_resolve.setDisable(true);
+            combo_respond.setDisable(true);
+        } else if (i == 8) {    // email solved button enable for admin
+            tittle_solveTime.setText("Resolved Time: ");
+            btn_lock.setDisable(false);
+            btn_lock.setVisible(false);
+            btn_unlock.setVisible(false);
+            btn_solv.setDisable(false);
+            btn_solv.setVisible(true);
+            selectUser.setVisible(false);
+            btn_resolve.setVisible(false);
+            btn_resolve.setDisable(true);
+            combo_respond.setDisable(true);
+        } else if (i == 9) { // email is not locked and display for admin select user and lock button
+            label_solveTime.setText("");
+            tittle_solveTime.setText("");
+            btn_lock.setDisable(false);
+            btn_lock.setVisible(true);
+            btn_unlock.setVisible(false);
+            btn_solv.setDisable(true);
+            selectUser.setDisable(false);
+            btn_resolve.setVisible(false); // new
+            combo_respond.setDisable(true);
+        } else if (i == 10) { //if email is locked and it can be unlocked by same admin
+            tittle_solveTime.setText("Allocate Time: ");
+            btn_lock.setVisible(false);
+            btn_unlock.setVisible(true);
+            btn_unlock.setDisable(false);
+            btn_solv.setVisible(true);
+            btn_solv.setDisable(true);     //
+            btn_resolve.setVisible(false); // new
+            combo_respond.setDisable(false);
         }
+    }
+
+
+    public void onResolve(ActionEvent actionEvent) {
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to mark this as Resolve?\n" +
+                "This action cannot be taken back.",
+                ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            sql.updateEmailForResolve(selectedEmail);
+            loadEmailsStatic();
+            reloadInstances();
+        } else {
+            return;
+        }
+
     }
 }

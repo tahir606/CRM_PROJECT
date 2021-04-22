@@ -53,7 +53,8 @@ public class ProductQueries {
             }
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
         
     }
@@ -89,7 +90,8 @@ public class ProductQueries {
             }
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
         
     }
@@ -106,7 +108,6 @@ public class ProductQueries {
         List<ProductProperty> allProducts = new ArrayList<>();
         
         try {
-            System.out.println(query);
             PreparedStatement statement = static_con.prepareStatement(query);
             ResultSet set = statement.executeQuery();
             //-------------Creating Email-------------
@@ -141,7 +142,6 @@ public class ProductQueries {
                 " AND PS_ID = ? ";
         
         try {
-//            System.out.println(query);
             PreparedStatement statement = static_con.prepareStatement(query);
             statement.setInt(1, where.getCode());
             ResultSet set = statement.executeQuery();
@@ -191,7 +191,8 @@ public class ProductQueries {
             
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
     
@@ -215,7 +216,8 @@ public class ProductQueries {
             statement.executeUpdate();
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
         
     }
@@ -241,7 +243,8 @@ public class ProductQueries {
             }
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
         
         return modules;
@@ -276,10 +279,11 @@ public class ProductQueries {
                 set.close();
                 statement.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                e.getLocalizedMessage();
+//            e.printStackTrace();
             }
         }
-        
+
         return product;
     }
     

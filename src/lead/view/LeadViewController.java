@@ -12,7 +12,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import lead.LeadDashController;
 import objects.Lead;
-import objects.Lead;
 
 import java.io.IOException;
 import java.net.URL;
@@ -80,7 +79,8 @@ public class LeadViewController implements Initializable {
                                         getClass().getClassLoader().getResource
                                                 ("lead/details/lead_details.fxml")));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                 }
             });

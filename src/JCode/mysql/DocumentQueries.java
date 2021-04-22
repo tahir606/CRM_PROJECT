@@ -61,7 +61,8 @@ public class DocumentQueries {
                 try {
                     output = new FileOutputStream(file);
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    e.getLocalizedMessage();
+//                    e.printStackTrace();
                 }
 
                 InputStream input = set.getBinaryStream("DFILE");
@@ -75,7 +76,8 @@ public class DocumentQueries {
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return allDocs;
@@ -93,7 +95,8 @@ public class DocumentQueries {
 
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return false;

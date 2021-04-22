@@ -64,7 +64,8 @@ public class clientDetailsController implements Initializable {
                                 getClass().getClassLoader().getResource("client/dash/clientView/clientView.fxml")));
 
             } catch (IOException e) {
-                e.printStackTrace();
+                e.getLocalizedMessage();
+//                e.printStackTrace();
             }
         });
 
@@ -83,7 +84,8 @@ public class clientDetailsController implements Initializable {
                         FXMLLoader.load(
                                 getClass().getClassLoader().getResource("client/newClient/newClient.fxml")));
             } catch (IOException e) {
-                e.printStackTrace();
+                e.getLocalizedMessage();
+//                e.printStackTrace();
             }
         });
 
@@ -136,7 +138,8 @@ public class clientDetailsController implements Initializable {
             Platform.setImplicitExit(true);
             stage2.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 }

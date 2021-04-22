@@ -20,8 +20,9 @@ public class Email {
     private boolean isSent, freze, isEmailTypeSent = false;
     private String rawContent;
     private List<Note> notes;
-
-
+    private int   isResolve,isAllocatedBy;
+    private String isAllocatedByName;
+    private String allocateTime,resolveTime;
 
     public Email() {
     }
@@ -42,6 +43,48 @@ public class Email {
                 ((subject.length() > 20) ? subject.substring(0, 20) + "..." : subject) +
                 ((relatedEmails.size() > 0) ? "\nAttached @: " + relatedEmails.size() : "");
         return e;
+    }
+
+    public String getAllocateTime() {
+        return allocateTime;
+    }
+
+    public void setAllocateTime(String allocateTime) {
+        this.allocateTime = allocateTime;
+    }
+
+    public String getResolveTime() {
+        return resolveTime;
+    }
+
+    public void setResolveTime(String resolveTime) {
+        this.resolveTime = resolveTime;
+    }
+
+    public int getIsAllocatedBy() {
+        return isAllocatedBy;
+    }
+
+    public void setIsAllocatedBy(int isAllocatedBy) {
+        this.isAllocatedBy = isAllocatedBy;
+    }
+
+    public String getIsAllocatedByName() {
+        return isAllocatedByName;
+    }
+
+    public void setIsAllocatedByName(String isAllocatedByName) {
+        this.isAllocatedByName = isAllocatedByName;
+    }
+
+
+
+    public int getIsResolve() {
+        return isResolve;
+    }
+
+    public void setIsResolve(int isResolve) {
+        this.isResolve = isResolve;
     }
 
     public int getEmailNo() {

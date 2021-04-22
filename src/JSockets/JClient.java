@@ -79,7 +79,6 @@ public class JClient {
                 // The client may have closed the socket.
                 restartSocket();
                 e.printStackTrace();
-//                System.out.println(e);
             }
         }).start();
     }

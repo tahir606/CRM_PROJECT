@@ -1,11 +1,10 @@
 package lead.details;
 
-import JCode.Toast;
-import gui.EventsConstructor;
-import gui.TasksConstructor;
-import gui.NotesConstructor;
 import JCode.mysql.mySqlConn;
 import com.jfoenix.controls.JFXButton;
+import gui.EventsConstructor;
+import gui.NotesConstructor;
+import gui.TasksConstructor;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,7 +14,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import lead.LeadDashController;
 import lead.newLead.NewLeadController;
 import lead.view.LeadViewController;
@@ -91,7 +89,8 @@ public class LeadDetailsController implements Initializable {
                             getClass().getClassLoader().getResource("lead/view/lead_view.fxml")));
 
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 
@@ -120,7 +119,8 @@ public class LeadDetailsController implements Initializable {
                                 getClass().getClassLoader().getResource("lead/newLead/new_lead.fxml")));
 
             } catch (IOException e) {
-                e.printStackTrace();
+                e.getLocalizedMessage();
+//                e.printStackTrace();
             }
         });
 

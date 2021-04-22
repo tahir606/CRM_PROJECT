@@ -46,7 +46,6 @@ public class LeadQueries {
                 statement.setInt(8, '\0');
             else
                 statement.setInt(8, lead.getSource());
-            System.out.println("Source: " + lead.getSource());
             statement.setString(9, lead.getOtherText());
             statement.setString(10, CommonTasks.getCurrentTimeStamp());
             statement.setInt(11, fHelper.ReadUserDetails().getUCODE());
@@ -56,7 +55,8 @@ public class LeadQueries {
             emailPhoneQueries.emailsPhoneInsertion(statement, lead);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
     }
@@ -94,7 +94,8 @@ public class LeadQueries {
             emailPhoneQueries.emailsPhoneInsertion(statement, lead);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
     }
@@ -119,7 +120,6 @@ public class LeadQueries {
         } else {
             query = query + " AND " + where;
         }
-        System.out.println(query);
         List<Lead> allLeads = new ArrayList<>();
         try {
 
@@ -183,7 +183,7 @@ public class LeadQueries {
                 lead.setEmail(set.getString("EM_NAME"));
                 lead.setPhone(set.getString("PH_NUM"));
                 lead.setNotes(noteQueries.getNotes(lead));
-//                System.out.println(lead);
+
                 return lead;
             }
 
@@ -210,7 +210,8 @@ public class LeadQueries {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return 0;
@@ -252,7 +253,8 @@ public class LeadQueries {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
     }
@@ -273,7 +275,8 @@ public class LeadQueries {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
 
         return false;
@@ -300,7 +303,8 @@ public class LeadQueries {
             statement.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } finally {
             // // doRelease(con);
         }
@@ -320,7 +324,8 @@ public class LeadQueries {
             statement.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         } finally {
             // // doRelease(con);
         }

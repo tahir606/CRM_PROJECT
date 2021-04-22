@@ -89,7 +89,8 @@ public class clientViewController implements Initializable {
                                         getClass().getClassLoader().getResource
                                                 ("client/dash/clientView/clientDetails/clientDetails.fxml")));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                 }
             });
@@ -129,7 +130,8 @@ public class clientViewController implements Initializable {
             Platform.setImplicitExit(true);
             stage2.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
     }
 }

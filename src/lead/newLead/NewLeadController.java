@@ -4,7 +4,6 @@ import JCode.Toast;
 import JCode.mysql.mySqlConn;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,14 +14,10 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lead.LeadDashController;
 import lead.view.LeadViewController;
 import objects.Lead;
-import objects.ProductProperty;
-import product.ProductDashController;
-import product.view.ProductViewController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -67,7 +62,8 @@ public class NewLeadController implements Initializable {
                                 getClass().getClassLoader().getResource("lead/view/lead_view.fxml")));
 
             } catch (IOException e) {
-                e.printStackTrace();
+                e.getLocalizedMessage();
+//                e.printStackTrace();
             }
         });
 

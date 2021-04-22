@@ -8,10 +8,7 @@ import objects.Task;
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class NotifyActivities {
 
@@ -32,7 +29,8 @@ public class NotifyActivities {
         try {
             Thread.sleep(1000 * 10);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
         }
         String currentDate = CommonTasks.getCurrentTimeStamp().split("\\s+")[0];
         //1- Notify tasks

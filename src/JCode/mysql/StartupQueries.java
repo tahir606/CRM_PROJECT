@@ -41,7 +41,8 @@ public class StartupQueries {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getLocalizedMessage();
+//            e.printStackTrace();
             return false;
         }
 

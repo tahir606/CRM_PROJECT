@@ -87,7 +87,6 @@ public class EmailSearch implements Initializable {
                 try {
 
                     int ticketNo = Integer.parseInt(search);
-                    System.out.println("ticket no "+ticketNo);
                     Email emails = sql.readSearchEmail(ticketNo);//Search Email through Query
                     if (emails == null) {
                         anchor_details.setVisible(false);
@@ -200,7 +199,6 @@ public class EmailSearch implements Initializable {
 
             eBody.getEngine().loadContent(email.getBody());
 
-//            System.out.println("NOT SETTING UP FONT");
             eBody.getEngine().setUserStyleSheetLocation("data:,body { font: 15px Calibri; }");
 //            eBody.setWrapText(true);
             eBody.setPrefSize(anchor_body.getWidth(), anchor_body.getHeight());

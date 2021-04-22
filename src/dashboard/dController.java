@@ -86,8 +86,9 @@ public class  dController implements Initializable {
         DrawerPane(); //Populate Drawer
         
         changeSelection(homeBtn, "Home/home_split.fxml", 1);
-
+        System.out.println("User Is Receiver Or Not : "+user.isEmail());
         if (user.isEmail()) {
+
             emailCtrl();
             isServer = true;
             new Thread(() -> new JServer()).start();
@@ -229,7 +230,8 @@ public class  dController implements Initializable {
                     try {
                         JClient.socket.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                 }
                 
@@ -247,7 +249,8 @@ public class  dController implements Initializable {
                 try {
                     root1 = (Parent) fxmlLoader.load();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    e.getLocalizedMessage();
+//                    e.printStackTrace();
                 }
                 Stage stage = new Stage();
                 stage.setTitle("Login- BITS");
@@ -294,7 +297,8 @@ public class  dController implements Initializable {
                     try {
                         Thread.sleep(10000);    //Wait for ten seconds before trying again
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                     continue;
                 } else {
@@ -307,7 +311,8 @@ public class  dController implements Initializable {
                         try {
                             Thread.sleep(10000);    //Wait for ten seconds before trying again
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            e.getLocalizedMessage();
+//                            e.printStackTrace();
                         }
                         continue;
                     } else {
@@ -315,7 +320,8 @@ public class  dController implements Initializable {
                         try {
                             Thread.sleep(60000);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            e.getLocalizedMessage();
+//                            e.printStackTrace();
                         }
                     }
                 }
@@ -349,7 +355,8 @@ public class  dController implements Initializable {
                     try {
                         border_pane.setCenter(FXMLLoader.load(getClass().getClassLoader().getResource(path)));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        e.getLocalizedMessage();
+//                        e.printStackTrace();
                     }
                     currentPane = pane;
 //                    img_loader.setVisible(false);
